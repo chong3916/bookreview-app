@@ -7,14 +7,14 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CustomUser
-        fields = ['id', 'username', 'email', 'password']
+        fields = ['id', 'first_name', 'last_name', 'email', 'password']
 
     def create(self, validated_data):
-        print("here")
         print(validated_data)
         user = CustomUser.objects.create_user(
-            username=validated_data['username'],
-            email=validated_data.get('email'),
+            first_name=validated_data['first_name'],
+            last_name=validated_data.get('last_name', ''),
+            email=validated_data['email'],
             password=validated_data['password']
         )
 
@@ -36,7 +36,10 @@ class UserSerializer(serializers.ModelSerializer):
 
         uid = urlsafe_base64_encode(force_bytes(user.pk))
         token = default_token_generator.make_token(user)
-        domain = get_current_site(self.context['request']).domain
+
+        request = self.context.get('request')
+        domain = get_current_site(request).domain if request else 'example.com'
+
         link = f"http://{domain}/activate/{uid}/{token}/"
 
         send_mail(
@@ -46,3 +49,14 @@ class UserSerializer(serializers.ModelSerializer):
             recipient_list=[user.email],
             fail_silently=False,
         )
+
+    def validate_email(self, value):
+        if CustomUser.objects.filter(email=value).exists():
+            raise serializers.ValidationError("Email already in use.")
+        return value
+
+
+class CurrentUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = ['first_name', 'last_name', 'email']
