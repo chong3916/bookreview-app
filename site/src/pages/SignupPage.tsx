@@ -11,16 +11,18 @@ import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 
 const SignupPage: React.FC<{}> = () => {
-    const [username, setUsername] = useState<string>("");
+    const [firstName, setFirstName] = useState<string>("");
+    const [lastName, setLastName] = useState<string>("");
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
 
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        const response = await auth.signup(email, username, password);
+        const response = await auth.signup(email, firstName, lastName, password);
         if(response.ok) {
-            setUsername("");
+            setFirstName("");
+            setLastName("")
             setEmail("");
             setPassword("");
             alert("Successful signup. Please check email to verify account.");
@@ -46,8 +48,14 @@ const SignupPage: React.FC<{}> = () => {
                         </div>
                         <div className="grid w-full items-center gap-4">
                             <div className="flex flex-col space-y-1.5">
-                                <Label htmlFor="username">Username</Label>
-                                <Input id="username" type="text" value={username} onChange={(e) => { setUsername(e.target.value) }} required />
+                                <Label htmlFor="firstName">First Name</Label>
+                                <Input id="firstName" type="text" value={firstName} onChange={(e) => { setFirstName(e.target.value) }} required />
+                            </div>
+                        </div>
+                        <div className="grid w-full items-center gap-4">
+                            <div className="flex flex-col space-y-1.5">
+                                <Label htmlFor="lastName">Last Name</Label>
+                                <Input id="lastName" type="text" value={lastName} onChange={(e) => { setLastName(e.target.value) }} />
                             </div>
                         </div>
                         <div className="grid w-full items-center gap-4">
