@@ -1,4 +1,4 @@
-import type {Contribution, FeaturedSeries, Image} from "@/components/types/BookModel.ts";
+import type {Contribution, FeaturedSeries} from "@/components/types/BookModel.ts";
 
 export interface BasicEditionBook {
     id: number,
@@ -18,7 +18,8 @@ export interface ThisEditionBook {
 
 export default interface BookDetailModel {
     id: number,
-    image: Image,
+    image_id: number | null,
+    image_url: string | null,
     pages: number,
     rating: number,
     ratings_count: number,

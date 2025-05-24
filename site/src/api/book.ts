@@ -35,7 +35,25 @@ const getBook = async (bookId: string) => {
     }
 }
 
+const getEditions = async (editionId: string, page: number) => {
+    const params = new URLSearchParams();
+    params.append("page", page.toString());
+
+    try {
+        const response = await fetch(`/api/editions/${editionId}?${params.toString()}`);
+
+        if (!response.ok) {
+            throw new Error("Failed to fetch");
+        }
+        console.log(response)
+        return response.json();
+    } catch (e) {
+        console.error("Error getting book editions:", e)
+    }
+}
+
 export const bookService = {
     searchBook,
-    getBook
+    getBook,
+    getEditions
 }

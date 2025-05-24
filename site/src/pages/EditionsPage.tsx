@@ -1,47 +1,46 @@
-import React, {useEffect, useRef, useState} from "react";
-import {useSearchParams} from "react-router";
-import {useSearchContext} from "@/contexts/SearchContext.tsx";
-import type SearchBookResult from "@/components/types/SearchBookResult.ts";
-import BookCard from "@/components/BookCard.tsx";
-import {testBookSearch} from "@/fixtures.ts";
-import {number} from "zod";
+import {useParams, useSearchParams} from "react-router";
+import {useEffect, useRef, useState} from "react";
+import { bookService } from "@/api/book.ts";
+import type EditionModel from "@/components/types/EditionModel.ts";
+import {testEditions} from "../editionFixtures.ts";
+import EditionCard from "@/components/EditionCard.tsx";
 import {
     Pagination,
-    PaginationContent,
-    PaginationEllipsis,
-    PaginationItem,
-    PaginationLink, PaginationNext,
+    PaginationContent, PaginationEllipsis,
+    PaginationItem, PaginationLink,
+    PaginationNext,
     PaginationPrevious
 } from "@/components/ui/pagination.tsx";
+import {number} from "zod";
 
 
-const SearchResultsPage: React.FC<{}> = () => {
+const EditionsPage: React.FC<{}> = () => {
+    const {editionId} = useParams();
+
     const [searchParams, setSearchParams] = useSearchParams();
-    const { setSearchData } = useSearchContext();
-    const query = searchParams.get("q") ?? "";
-    const title = searchParams.get("title") ?? "";
-    const author = searchParams.get("author") ?? "";
-    const subject = searchParams.get("subject") ?? "";
-    const page = parseInt(searchParams.get("page") ?? "1");
+    const pageParam = searchParams.get("page");
+    const page = pageParam !== null ? parseInt(pageParam) : 1;
 
-    const [results, setResults] = useState<SearchBookResult|null>(null);
+    const [editions, setEditions] = useState<EditionModel[]>([])
     const [totalPages, setTotalPages] = useState<number>(1)
 
     useEffect(() => {
-        setSearchData({ query: query, title: title, author: author, subject: subject, page: page });
-        getSearch();
-    }, [])
+        if (!editionId) return;
 
-    const getSearch = async () => {
-        try {
-            // const response = await bookService.searchBook(query, title, author, subject, page);
-            const response = testBookSearch;
-            setResults(response);
-            console.log(response);
-            setTotalPages(response.found ? Math.ceil(response.found / 25) : 1)
-        } catch (e) {
-            console.error("Search failed", e);
-        }
+        getEditions(editionId, page)
+    }, [editionId, page])
+
+    const getEditions = async (id: string, page: number) => {
+        // try {
+        //     const response = await bookService.getEditions(id, page);
+        //     console.log(response)
+        //     setEditions(response);
+        // } catch (err) {
+        //     console.error("Error fetching book details:", err);
+        // }
+        const response = testEditions
+        setTotalPages(response[0].editions_count ? Math.ceil(response[0].editions_count / 10) : 1)
+        setEditions(response)
     }
 
     const goToPage = (newPage: number) => {
@@ -88,10 +87,7 @@ const SearchResultsPage: React.FC<{}> = () => {
 
     return (
         <div className="grid gap-y-8 py-10 mx-auto w-3/4">
-            {results?.hits?.map((book) => (
-                <BookCard key={book.document.id} book={book.document} />
-            )) ?? null }
-
+            {editions.map((edition) => <EditionCard key={edition.id} edition={edition}/>)}
             <Pagination>
                 <PaginationContent>
                     <PaginationItem>
@@ -136,8 +132,9 @@ const SearchResultsPage: React.FC<{}> = () => {
                     </PaginationItem>
                 </PaginationContent>
             </Pagination>
+
         </div>
     )
 }
 
-export default SearchResultsPage;
+export default EditionsPage;

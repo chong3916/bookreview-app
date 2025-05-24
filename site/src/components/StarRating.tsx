@@ -9,6 +9,7 @@ interface StarRatingProps {
     max?: number; // default 5
     readOnly?: boolean;
     size?: "sm" | "md" | "lg";
+    fillColor?: string;
 }
 
 const sizeClasses = {
@@ -17,7 +18,7 @@ const sizeClasses = {
     lg: "h-8 w-8",
 };
 
-export const StarRating: React.FC<StarRatingProps> = ({ value = 0, onChange, max = 5, readOnly = false, size = "md" }) => {
+export const StarRating: React.FC<StarRatingProps> = ({ value = 0, onChange, max = 5, readOnly = false, size = "md", fillColor = "text-yellow-400 fill-yellow-400" }) => {
 
     const [hovered, setHovered] = useState<number | null>(null);
     const displayValue = hovered !== null ? hovered : value;
@@ -54,7 +55,7 @@ export const StarRating: React.FC<StarRatingProps> = ({ value = 0, onChange, max
 
                         {/* Filled Star with mask */}
                         <div className={cn("absolute overflow-hidden", sizeClasses[size])} style={{ width: `${fillPercent}%` }}>
-                            <Star className="text-yellow-400 fill-yellow-400" strokeWidth={1} />
+                            <Star className={cn(fillColor, sizeClasses[size])} strokeWidth={1} />
                         </div>
                     </div>
                 );
