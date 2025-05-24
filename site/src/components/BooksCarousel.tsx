@@ -39,8 +39,8 @@ const BooksCarousel: React.FC<BooksCarouselProps> = ({ books, side }) => {
                     </CarouselItem>
                 ))}
             </CarouselContent>
-            <CarouselPrevious />
-            <CarouselNext />
+            <CarouselPrevious className="cursor-pointer"/>
+            <CarouselNext className="cursor-pointer"/>
         </Carousel>
     )
 }

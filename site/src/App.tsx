@@ -16,7 +16,7 @@ function App() {
             <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
                 <AuthContextProvider>
                     <SearchContextProvider>
-                        <div className="min-h-screen bg-slate-900 text-white">
+                        <div className="min-h-screen">
                             <Routes>
                                 <Route path="/books/:bookId" element={<BookDetailsPage/>}/>
                                 <Route path="/signup" element={<SignupPage/>}/>

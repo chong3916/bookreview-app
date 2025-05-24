@@ -1,10 +1,9 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {useSearchParams} from "react-router";
 import {useSearchContext} from "@/contexts/SearchContext.tsx";
 import type SearchBookResult from "@/components/types/SearchBookResult.ts";
 import BookCard from "@/components/BookCard.tsx";
 import {testBookSearch} from "@/fixtures.ts";
-import {number} from "zod";
 import {
     Pagination,
     PaginationContent,

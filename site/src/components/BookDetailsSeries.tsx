@@ -5,7 +5,7 @@ import BooksCarousel from "@/components/BooksCarousel.tsx";
 
 interface BookDetailsSeriesProps {
     series: Series,
-    position: number
+    position?: number
 }
 
 const BookDetailsSeries: React.FC<BookDetailsSeriesProps> = ({ series, position }) => {
@@ -22,9 +22,9 @@ const BookDetailsSeries: React.FC<BookDetailsSeriesProps> = ({ series, position 
             </Badge>
         </div>
 
-        <div className="text-lg italic font-light tracking-wide text-slate-300">
+        {position ? <div className="text-lg italic font-light tracking-wide text-slate-300">
             <Link to={`/series/${series.id}`}>{series.name} #{position}</Link>
-        </div>
+        </div> : null}
 
         <BooksCarousel books={series.series_books} side={"top"}/>
     </div>)

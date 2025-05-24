@@ -23,16 +23,16 @@ const BookDetailsTabs: React.FC<SearchDetailsTabsProps> = ({ bookDetails }) => {
             <TabsList className="inline-flex h-9 items-center text-muted-foreground w-full justify-start rounded-none border-b !bg-transparent p-0">
                 <TabsTrigger value="bookinfo" className="relative rounded-none border-b-2 border-b-transparent !bg-transparent px-4 pb-3 pt-2 font-semibold
                                                                             text-muted-foreground shadow-none transition-none focus-visible:ring-0
-                                                                            data-[state=active]:!border-b-indigo-500 data-[state=active]:border-t-0
+                                                                            data-[state=active]:!border-b-primary data-[state=active]:border-t-0
                                                                             data-[state=active]:border-l-0 data-[state=active]:border-r-0 data-[state=active]:border-b-2
-                                                                            data-[state=active]:text-foreground data-[state=active]:shadow-none " >
+                                                                            data-[state=active]:text-foreground data-[state=active]:shadow-none cursor-pointer" >
                     Book Info
                 </TabsTrigger>
                 <TabsTrigger value="editions" className="relative rounded-none border-b-2 border-b-transparent !bg-transparent px-4 pb-3 pt-2 font-semibold
                                                                             text-muted-foreground shadow-none transition-none focus-visible:ring-0
-                                                                            data-[state=active]:!border-b-indigo-500 data-[state=active]:border-t-0
+                                                                            data-[state=active]:!border-b-primary data-[state=active]:border-t-0
                                                                             data-[state=active]:border-l-0 data-[state=active]:border-r-0 data-[state=active]:border-b-2
-                                                                            data-[state=active]:text-foreground data-[state=active]:shadow-none " >
+                                                                            data-[state=active]:text-foreground data-[state=active]:shadow-none cursor-pointer" >
                     Editions
                 </TabsTrigger>
             </TabsList>
@@ -44,7 +44,7 @@ const BookDetailsTabs: React.FC<SearchDetailsTabsProps> = ({ bookDetails }) => {
                             <div className="flex flex-wrap gap-1 pt-5 items-center">
                                 <div className="mr-1 text-slate-500 font-medium text-sm tracking-wide">GENRES</div>
                                 {bookDetails.tags?.map((tag, i: number) => (
-                                    <Badge key={i} variant="outline" className="text-indigo-400 font-extralight text-sm"
+                                    <Badge key={i} variant="outline" className="text-badge-foreground hover:text-badge-hover cursor-pointer font-extralight text-sm"
                                            style={{borderRadius: '3px'}}>
                                         {tag}
                                     </Badge>

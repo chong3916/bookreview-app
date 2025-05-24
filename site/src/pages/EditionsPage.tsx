@@ -1,5 +1,5 @@
 import {useParams, useSearchParams} from "react-router";
-import {useEffect, useRef, useState} from "react";
+import {useEffect, useState} from "react";
 import { bookService } from "@/api/book.ts";
 import type EditionModel from "@/components/types/EditionModel.ts";
 import {testEditions} from "../editionFixtures.ts";
@@ -11,7 +11,6 @@ import {
     PaginationNext,
     PaginationPrevious
 } from "@/components/ui/pagination.tsx";
-import {number} from "zod";
 
 
 const EditionsPage: React.FC<{}> = () => {
