@@ -1,5 +1,5 @@
 import {useParams} from "react-router";
-import {useEffect, useRef, useState} from "react";
+import {useEffect, useState} from "react";
 import type BookDetailModel from "@/components/types/BookDetailModel.ts";
 import {bookService} from "@/api/book.ts";
 import {Separator} from "@/components/ui/separator"
@@ -50,7 +50,7 @@ const BookDetailsPage: React.FC<{}> = () => {
                                 alt={bookDetails.title}
                                 className="w-full h-auto object-contain rounded"
                             /> : <div className="w-36 aspect-[2/3] bg-gray-200 rounded" />}
-                            <Button className="w-full my-3 bg-indigo-500 text-white">WANT TO READ</Button>
+                            <Button className="w-full my-3 bg-primary text-primary-foreground">WANT TO READ</Button>
                         </div>
                         {/* Right side of page */}
                         <div className="flex flex-col pb-3 w-full ml-[30%] mt-16">
@@ -74,7 +74,7 @@ const BookDetailsPage: React.FC<{}> = () => {
                             </div>
 
                             <div className="flex flex-row my-3 items-center tracking-wide text-sm h-3"> {/* Reviews/Ratings */}
-                                <div className="mr-2"><StarRating value={Math.trunc(bookDetails.rating * 100) / 100} readOnly={true} size="md"/></div>
+                                <div className="mr-2"><StarRating value={Math.trunc(bookDetails.rating * 100) / 100} readOnly={true} size="md" fillColor="text-star-color fill-star-color"/></div>
                                 <div className="mr-2">{Math.trunc(bookDetails.rating * 100) / 100}</div>
                                 <Separator orientation="vertical"/>
                                 <div className="m-2">{bookDetails.reviews_count}</div>

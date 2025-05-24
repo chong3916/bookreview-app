@@ -23,13 +23,13 @@ const EditionCard: React.FC<EditionCardProps> = ({ edition }) => {
     }
 
     return (
-        <Card className="w-full overflow-hidden p-0 bg-slate-900 min-h-[12rem] rounded-sm">
+        <Card className="w-full overflow-hidden p-0 min-h-[12rem] rounded-sm bg-card border-card-border">
             <div className="flex gap-6 items-stretch">
                 {edition.image_url ? (
                     <img
                         src={edition.image_url}
                         alt={edition.title}
-                        className="object-cover w-36"
+                        className="object-cover w-36 h-auto"
                     />
                 ) : (
                     <div className="w-36 aspect-[2/3] bg-gray-200"/>
@@ -39,24 +39,24 @@ const EditionCard: React.FC<EditionCardProps> = ({ edition }) => {
                         to={`/books/${edition.book_id}`}
                         className="text-xl font-semibold hover:text-muted-foreground tracking-wide text-slate-200 pb-3"
                     >{edition.title}</Link>
-                    <div className="text-slate-300 text-sm font-light">
-                        Published {formattedDate} by {edition.publisher_name}
+                    <div className="text-muted-foreground text-sm font-light">
+                        Published {formattedDate} {edition.publisher_name ? "by" : null} {edition.publisher_name}
                     </div>
-                    <div className="text-slate-300 text-sm font-light">
-                        {edition.pages} pages{edition.edition_information ? "," : null} {edition.edition_information}
+                    <div className="text-muted-foreground text-sm font-light">
+                        {edition.pages} {edition.pages ? "pages" : null}{edition.edition_information ? "," : null} {edition.edition_information}
                     </div>
                     <div>
                         {authors.map((author, index) => (
-                            <span key={author}>
+                            <span key={author} className="inline-flex items-center pr-1">
                                 <Link
                                     to={`/search?author=${encodeURIComponent(author)}`}
-                                    className="text-slate-300 text-sm font-light hover:text-muted-foreground"
+                                    className="text-muted-foreground text-sm font-light hover:text-card-muted-foreground"
                                 >{author}</Link>
-                                {index < authors.length - 1 && ', '}
+                                <div className="text-muted-foreground">{index < authors.length - 1 && ', '}</div>
                             </span>
                         ))}
                     </div>
-                    <div className="text-slate-300 text-sm font-light">
+                    <div className="text-muted-foreground text-sm font-light">
                         Edition language: {edition.language.replace(";", ",")}
                     </div>
                 </div>

@@ -25,8 +25,8 @@ const EditionsCarousel: React.FC<EditionsCarouselProps> = ({ editions, title }) 
                     </CarouselItem>
                 ))}
             </CarouselContent>
-            <CarouselPrevious />
-            <CarouselNext />
+            <CarouselPrevious className="cursor-pointer"/>
+            <CarouselNext className="cursor-pointer"/>
         </Carousel>
     )
 }

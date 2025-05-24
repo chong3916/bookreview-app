@@ -17,13 +17,13 @@ const BookCard: React.FC<{ book: BookDocument }> = ({book}) => {
     }, [])
 
     return (
-        <Card className="w-full overflow-hidden p-0 bg-slate-900 min-h-[12rem] rounded-sm">
+        <Card className="w-full overflow-hidden p-0 min-h-[12rem] rounded-sm bg-card border-card-border">
             <div className="flex gap-6 items-stretch">
                 {book.image ? (
                     <img
                         src={book.image.url}
                         alt={book.title}
-                        className="object-cover w-36"
+                        className="object-cover w-36 h-auto"
                     />
                 ) : (
                     <div className="w-36 aspect-[2/3] bg-gray-200"/>
@@ -31,28 +31,28 @@ const BookCard: React.FC<{ book: BookDocument }> = ({book}) => {
                 <div className="flex flex-col justify-center pr-6 py-4 space-y-3">
                     <Link
                         to={`/books/${book.id}`}
-                        className="text-xl font-semibold hover:text-muted-foreground tracking-wide text-slate-200"
+                        className="text-xl font-semibold hover:text-muted-foreground tracking-wide"
                     >{book.title}</Link>
                     <div>
                         {authors.map((author, index) => (
                             <span key={author}>
                                 <Link
                                     to={`/search?author=${encodeURIComponent(author)}`}
-                                    className="text-slate-300 hover:text-muted-foreground font-light"
+                                    className="text-secondary-foreground hover:text-muted-foreground font-light"
                                 >{author}</Link>
                                 {index < authors.length - 1 && ', '}
                             </span>
                         ))}
                     </div>
-                    <div className="flex gap-1 text-xs text-slate-400 font-thin">
-                        <StarRating value={Math.trunc(book.rating * 100) / 100} readOnly={true} size="sm" fillColor="text-indigo-400 fill-indigo-400"/>
+                    <div className="flex gap-1 text-xs text-muted-foreground font-thin">
+                        <StarRating value={Math.trunc(book.rating * 100) / 100} readOnly={true} size="sm" fillColor="text-star-color fill-star-color"/>
                         <div>{Math.trunc(book.rating * 100) / 100} avg rating - </div>
                         <div>{book.ratings_count} ratings - </div>
                         <div>published {book.release_year}</div>
                     </div>
                     <div className="flex flex-wrap gap-1">
                         {book.genres?.slice(0, 10).map((genre) => (
-                            <Badge key={genre} variant="outline" className="text-indigo-500" style={{ borderRadius: '3px' }}>
+                            <Badge key={genre} variant="outline" className="text-badge-foreground hover:text-badge-hover cursor-pointer" style={{ borderRadius: '3px' }}>
                                 {genre}
                             </Badge>
                         ))}
