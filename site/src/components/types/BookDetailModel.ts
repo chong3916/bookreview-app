@@ -1,15 +1,19 @@
 import type {Contribution, FeaturedSeries, Image} from "@/components/types/BookModel.ts";
 
-export interface TagInternal {
-    tag: string
+export interface BasicEditionBook {
+    id: number,
+    image_url: string
 }
 
-export interface Tag {
-    tag: TagInternal
-}
-
-export interface TaggingAggregate {
-    nodes: Tag[]
+export interface ThisEditionBook {
+    id: number,
+    edition_information?: string | null,
+    publisher_name?: string | null,
+    publisher_id?: number | null,
+    asin?: string | null,
+    isbn_10?: string | null,
+    isbn_13?: string | null,
+    language?: string | null
 }
 
 export default interface BookDetailModel {
@@ -26,7 +30,9 @@ export default interface BookDetailModel {
     featured_book_series: FeaturedSeries,
     tags: string[],
     title: string,
-    contributions: Contribution[]
+    contributions: Contribution[],
+    editions: BasicEditionBook[],
+    this_edition: ThisEditionBook
 }
 
 // export interface Rating {
