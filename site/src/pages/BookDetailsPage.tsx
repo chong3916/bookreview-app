@@ -48,7 +48,7 @@ const BookDetailsPage: React.FC<{}> = () => {
                 (
                     <div className="flex items-start md:flex-row flex-col">
                         {/* Left side of page */}
-                        <div className="w-full md:w-1/4 flex-shrink-0 mb-6 md:mb-0">
+                        <div className="fixed top-24 left-20 w-1/4 max-w-xs z-40">
                             {bookDetails.image ? <img
                                 src={bookDetails.image.url}
                                 alt={bookDetails.title}
@@ -57,7 +57,7 @@ const BookDetailsPage: React.FC<{}> = () => {
                             <Button className="w-full my-3 bg-indigo-500 text-white">WANT TO READ</Button>
                         </div>
                         {/* Right side of page */}
-                        <div className="flex flex-col md:mx-10 pb-3 w-full">
+                        <div className="flex flex-col pb-3 w-full ml-[30%] mt-16">
                             <div className="text-xl md:text-2xl tracking-wide">{bookDetails.title}</div> {/* Title */}
 
                             <div className="flex flex-row mb-2"> {/* Authors */}
@@ -92,8 +92,8 @@ const BookDetailsPage: React.FC<{}> = () => {
                             {bookDetails.featured_book_series?.series ?
                                 <BookDetailsSeries series={bookDetails.featured_book_series.series} position={bookDetails.featured_book_series.position}/> : null}
 
-
                             {/* Recommendations */}
+                            <div>RECOMMENDATIONS</div>
                         </div>
                     </div>)
                 : null}
