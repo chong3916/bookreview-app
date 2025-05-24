@@ -35,10 +35,10 @@ export interface Series {
 }
 
 export interface FeaturedSeries {
-    id: number,
+    id?: number,
     series: Series,
-    unreleased: boolean,
-    position: number
+    unreleased?: boolean,
+    position?: number
 }
 
 export interface Image {

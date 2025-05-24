@@ -13,7 +13,6 @@ import BookDetailsSeries from "@/components/BookDetailsSeries.tsx";
 const BookDetailsPage: React.FC<{}> = () => {
     const {bookId} = useParams();
     const [bookDetails, setBookDetails] = useState<BookDetailModel | null>(null)
-    const hasRefreshed = useRef(false);
 
     const authors: string[] = bookDetails?.contributions?.map((contributor: Contribution) => {
         const name = contributor.author.name;
@@ -23,9 +22,7 @@ const BookDetailsPage: React.FC<{}> = () => {
 
     useEffect(() => {
         console.log(bookId)
-        if (!bookId || hasRefreshed.current) return;
-
-        hasRefreshed.current = true;
+        if (!bookId) return;
         getDetails(bookId);
     }, [bookId])
 
@@ -37,9 +34,8 @@ const BookDetailsPage: React.FC<{}> = () => {
         // } catch (err) {
         //     console.error("Error fetching book details:", err);
         // }
-        const response = testBookDetails
-        console.log(response)
-        setBookDetails(response)
+
+        setBookDetails(testBookDetails)
     }
 
     return (
@@ -49,8 +45,8 @@ const BookDetailsPage: React.FC<{}> = () => {
                     <div className="flex items-start md:flex-row flex-col">
                         {/* Left side of page */}
                         <div className="fixed top-24 left-20 w-1/4 max-w-xs z-40">
-                            {bookDetails.image ? <img
-                                src={bookDetails.image.url}
+                            {bookDetails.image_url ? <img
+                                src={bookDetails.image_url}
                                 alt={bookDetails.title}
                                 className="w-full h-auto object-contain rounded"
                             /> : <div className="w-36 aspect-[2/3] bg-gray-200 rounded" />}

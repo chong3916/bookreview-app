@@ -8,6 +8,7 @@ import {SearchContextProvider} from "@/contexts/SearchContext.tsx";
 import SearchResultsPage from "@/pages/SearchResultsPage.tsx";
 import {ThemeProvider} from "@/contexts/ThemeProvider.tsx";
 import BookDetailsPage from "@/pages/BookDetailsPage.tsx";
+import EditionsPage from "@/pages/EditionsPage.tsx";
 
 function App() {
     return (
@@ -21,6 +22,7 @@ function App() {
                                 <Route path="/signup" element={<SignupPage/>}/>
                                 <Route path="/search" element={<SearchResultsPage />} />
                                 <Route path="/login" element={<LoginPage/>}/>
+                                <Route path="/editions/:editionId" element={<EditionsPage />} />
                                 <Route path="/" element={<HomePage/>}/>
                             </Routes>
                         </div>
