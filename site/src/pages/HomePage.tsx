@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router";
 import {useAuthContext} from "@/contexts/AuthContext.tsx";
 import { Button } from "@/components/ui/button"
+import SearchBar from "@/components/SearchBar.tsx";
 
 const HomePage: React.FC<{}> = () => {
     const { authData, logout } = useAuthContext();
@@ -13,6 +14,7 @@ const HomePage: React.FC<{}> = () => {
                 <Link to="/signup">Sign up</Link><br/>
                 <Link to="/login">Login</Link><br/>
                 <Button onClick={logout}>Log out</Button>
+                <SearchBar/>
             </div>
         </div>
     );
