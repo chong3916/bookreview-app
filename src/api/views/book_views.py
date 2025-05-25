@@ -41,8 +41,8 @@ def fetch_book_editions(book_id: int, offset: int) -> requests.Response:
     variables = {"bookId": book_id, "offset": offset}
     return graphql_request(GET_BOOK_EDITIONS, variables)
 
-def fetch_trending_books(from_str, to_str)  -> requests.Response:
-    variables = {"from": from_str, "to": to_str}
+def fetch_trending_books(from_str, to_str, offset: int) -> requests.Response:
+    variables = {"from": from_str, "to": to_str, "offset": offset}
     return graphql_request(GET_TRENDING_BOOKS, variables)
 
 # class BookTermSearchView(APIView):
@@ -177,9 +177,13 @@ class BookDetailView(APIView):
 
 class BookEditionsView(APIView):
     def get(self, request, book_id):
-        page_number = self.request.GET.get("page", 1)
-        offset = int(page_number - 1) * 10
+        page = request.query_params.get("page", 1)
+        try:
+            page = int(page)
+        except ValueError:
+            return Response({"error": "startIndex must be an integer"}, status=400)
 
+        offset = max(page - 1, 0) * 10
         response = fetch_book_editions(book_id, offset)
 
         if response.status_code != 200:
@@ -207,11 +211,19 @@ class TrendingView(APIView):
         if duration not in durations:
             return Response({"error": "Invalid duration"}, status=400)
 
+        page = request.query_params.get("page", 1)
+        try:
+            page = int(page)
+        except ValueError:
+            return Response({"error": "startIndex must be an integer"}, status=400)
+
+        offset = max(page - 1, 0) * 10
+
         from_date = today - durations[duration]
         to_str = today.strftime("%Y-%m-%d")
         from_str = from_date.strftime("%Y-%m-%d")
 
-        response = fetch_trending_books(from_str, to_str)
+        response = fetch_trending_books(from_str, to_str, offset)
 
         if response.status_code != 200:
             return Response(
@@ -223,6 +235,7 @@ class TrendingView(APIView):
         data = responseData.get("data", {})
         trending_books = data.get("books_trending", {})
         ids = trending_books.get("ids") or []
+        print(len(ids))
         books = []
         with ThreadPoolExecutor(max_workers=10) as executor:
             futures = {executor.submit(fetch_book_basic, book_id): book_id for book_id in ids}
@@ -238,6 +251,7 @@ class TrendingView(APIView):
                 else:
                     print(f"Failed to fetch book ID {futures[future]} - Status: {response.status_code}")
 
+        print(len(books))
         return Response(books)
 
 def flatten_book_response(book_data):
