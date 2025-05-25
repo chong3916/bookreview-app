@@ -44,6 +44,8 @@
   --color-badge-foreground: var(--badge-foreground);
   --color-badge-hover: var(--badge-hover);
   --color-star-color: var(--star-color);
+  --color-navbar-background: var(--navbar-background);
+  --color-navbar-accent: var(--navbar-accent);
 }
 
 :root {
@@ -84,12 +86,14 @@
   --badge-foreground: oklch(0.68 0.16 277);
   --badge-hover: oklch(0.51 0.23 277);
   --star-color: oklch(0.84 0.16 84);
+  --navbar-background: oklch(0.21 0.04 266);
+  --navbar-accent: oklch(0.26 0.04 262);
 }
 
 .dark {
-  --background: oklch(0.21 0.04 266);
+  --background: oklch(0.28 0.04 260);
   --foreground: oklch(0.984 0.003 247.858);
-  --card: oklch(0.21 0.04 266);
+  --card: oklch(0.28 0.04 260);
   --card-foreground: oklch(0.984 0.003 247.858);
   --card-border: oklch(0.37 0.04 257);
   --card-muted-foreground: oklch(0.554 0.046 257.417);
@@ -123,6 +127,8 @@
   --badge-foreground: oklch(0.68 0.16 277);
   --badge-hover: oklch(0.51 0.23 277);
   --star-color: oklch(0.84 0.16 84);
+  --navbar-background: oklch(0.21 0.04 266);
+  --navbar-accent: oklch(0.19 0.04 266);
 }
 
 @layer base {

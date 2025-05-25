@@ -9,6 +9,7 @@ import SearchResultsPage from "@/pages/SearchResultsPage.tsx";
 import {ThemeProvider} from "@/contexts/ThemeProvider.tsx";
 import BookDetailsPage from "@/pages/BookDetailsPage.tsx";
 import EditionsPage from "@/pages/EditionsPage.tsx";
+import Navbar from "@/components/Navbar.tsx";
 
 function App() {
     return (
@@ -17,6 +18,7 @@ function App() {
                 <AuthContextProvider>
                     <SearchContextProvider>
                         <div className="min-h-screen">
+                            <Navbar/>
                             <Routes>
                                 <Route path="/books/:bookId" element={<BookDetailsPage/>}/>
                                 <Route path="/signup" element={<SignupPage/>}/>
