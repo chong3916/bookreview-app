@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
 from pathlib import Path
+from dotenv import load_dotenv
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -41,7 +43,8 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
 
     'users',
-    'api'
+    'api',
+    'dotenv'
 ]
 
 AUTH_USER_MODEL = 'users.CustomUser'
@@ -54,6 +57,13 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.BasicAuthentication',
     ),
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+    ],
+    'DEFAULT_PARSER_CLASSES': [
+        'rest_framework.parsers.JSONParser',
+    ],
+    'URL_FORMAT_OVERRIDE': None,
 }
 
 MIDDLEWARE = [
@@ -135,6 +145,11 @@ USE_L10N = True
 
 USE_TZ = True
 
+APPEND_SLASH = False
+
+load_dotenv()
+
+API_KEY = os.getenv("API_KEY")
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
