@@ -16,6 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
+from api.views.author_views import AuthorDetailView
 from api.views.user_views import ActivateUserView, RefreshTokenView
 
 urlpatterns = [
@@ -26,4 +27,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/books/', include('api.urls.book_urls')),
     path('api/editions/', include('api.urls.edition_urls')),
+    path('api/author/<str:author_id>', AuthorDetailView.as_view(), name='author-detail')
 ]

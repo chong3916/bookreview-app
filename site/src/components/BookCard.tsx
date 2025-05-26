@@ -5,7 +5,7 @@ import type {BookDocument} from "@/components/types/BookModel.ts";
 import {useEffect} from "react";
 import StarRating from "@/components/StarRating.tsx";
 
-const BookCard: React.FC<{ book: BookDocument }> = ({book}) => {
+const BookCard: React.FC<{ book: BookDocument }> = ({ book }) => {
     const authors: string[] = book.contributions?.map((contributor) => {
         const name = contributor.author.name;
         const contribution = contributor.contribution;
@@ -32,7 +32,7 @@ const BookCard: React.FC<{ book: BookDocument }> = ({book}) => {
     return (
         <Card className="w-full overflow-hidden p-0 min-h-[12rem] rounded-sm bg-card border-card-border">
             <div className="flex gap-6 items-stretch">
-                {book.image ? (
+                {book.image && book.image.url? (
                     <img
                         src={book.image.url}
                         alt={book.title}
@@ -43,14 +43,14 @@ const BookCard: React.FC<{ book: BookDocument }> = ({book}) => {
                 )}
                 <div className="flex flex-col justify-center pr-6 py-4 space-y-3">
                     <Link
-                        to={`/books/${book.id}`}
+                        to={`/book/${book.id}`}
                         className="text-xl font-semibold hover:text-muted-foreground tracking-wide"
                     >{book.title}</Link>
                     <div>
                         {authors.map((author, index) => (
                             <span key={author}>
                                 <Link
-                                    to={`/search?author=${encodeURIComponent(author)}`}
+                                    to={`/author/${(book.contributions?.[index]?.author?.id ?? "")}`}
                                     className="text-secondary-foreground hover:text-muted-foreground font-light"
                                 >{author}</Link>
                                 {index < authors.length - 1 && ', '}

@@ -3,7 +3,7 @@ import {useEffect, useState} from "react";
 import type BookDetailModel from "@/components/types/BookDetailModel.ts";
 import {bookService} from "@/api/book.ts";
 import {Separator} from "@/components/ui/separator"
-import {testBookDetails} from "@/fixtures.ts";
+import {testBookDetails} from "@/bookDetailsFixtures.ts";
 import type {Contribution} from "@/components/types/BookModel.ts";
 import {Button} from "@/components/ui/button.tsx";
 import StarRating from "@/components/StarRating.tsx";

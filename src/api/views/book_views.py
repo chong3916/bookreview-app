@@ -9,6 +9,8 @@ from dateutil.relativedelta import relativedelta
 from api.queries import *
 from core.settings import API_KEY
 
+SEARCH_QUERY_TYPES = ["author", "book", "character", "list", "prompt", "publisher", "series", "user"]
+
 def graphql_request(query: str, variables: dict) -> requests.Response:
     url = "https://api.hardcover.app/v1/graphql"
     headers = {
@@ -17,8 +19,11 @@ def graphql_request(query: str, variables: dict) -> requests.Response:
     }
     return requests.post(url, headers=headers, json={"query": query, "variables": variables})
 
-def fetch_book_search(query, page: int)  -> requests.Response:
-    variables = {"query": query, "page": page, "sort": "users_count:desc"}
+def fetch_search(query, page: int, query_type)  -> requests.Response:
+    sort = ""
+    if query_type == "book":
+        sort = "users_count:desc"
+    variables = {"query": query, "page": page, "sort": sort, "query_type": query_type}
     return graphql_request(GET_SEARCH_BOOK, variables)
 
 def fetch_book_basic(book_id: int) -> requests.Response:
@@ -81,6 +86,7 @@ def fetch_upcoming_books(from_str, to_str, offset: int) -> requests.Response:
 class BookHardcoverSearchView(APIView):
     def get(self, request):
         query = request.query_params.get("q")
+        query_type = request.query_params.get("type", "book").lower()
         page = request.query_params.get("page", 1)
         if not query or not query.strip():
             return Response({"error": "Missing query"}, status=400)
@@ -90,7 +96,11 @@ class BookHardcoverSearchView(APIView):
         except ValueError:
             return Response({"error": "startIndex must be an integer"}, status=400)
 
-        response = fetch_book_search(query, page)
+        if query_type not in SEARCH_QUERY_TYPES:
+            query_type = "book"
+
+        print(query_type)
+        response = fetch_search(query, page, query_type)
 
         if response.status_code == 200:
             responseData = response.json()
