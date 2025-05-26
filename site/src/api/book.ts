@@ -64,7 +64,23 @@ const getTrending = async (duration: string, page: number)=> {
         }
         return response.json();
     } catch (e) {
-        console.error("Error getting book editions:", e)
+        console.error("Error getting trending books:", e)
+    }
+}
+
+const getUpcoming = async (duration: string, page: number)=> {
+    const params = new URLSearchParams();
+    params.append("page", page.toString());
+
+    try {
+        const response = await fetch(`/api/books/upcoming/${duration}?${params.toString()}`);
+        console.log(response);
+        if (!response.ok) {
+            throw new Error("Failed to fetch");
+        }
+        return response.json();
+    } catch (e) {
+        console.error("Error getting upcoming books:", e)
     }
 }
 
@@ -72,5 +88,6 @@ export const bookService = {
     searchBook,
     getBook,
     getEditions,
-    getTrending
+    getTrending,
+    getUpcoming
 }
