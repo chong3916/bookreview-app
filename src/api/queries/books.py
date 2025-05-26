@@ -159,8 +159,8 @@ query GetBookDetails($editionId: Int!) {
 """
 
 GET_TRENDING_BOOKS = """
-query GetTrending($from: date!, $to: date!) {
-    books_trending(from: $from, to: $to, limit: 10, offset: 0) {
+query GetTrending($from: date!, $to: date!, $offset: Int!) {
+    books_trending(from: $from, to: $to, limit: 10, offset: $offset) {
         ids
     }
 }
