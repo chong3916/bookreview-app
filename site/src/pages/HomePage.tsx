@@ -1,20 +1,13 @@
 import React from "react";
-import { Link } from "react-router";
 import {useAuthContext} from "@/contexts/AuthContext.tsx";
-import { Button } from "@/components/ui/button"
-import SearchBar from "@/components/SearchBar.tsx";
 
 const HomePage: React.FC<{}> = () => {
-    const { authData, logout } = useAuthContext();
+    const { authData } = useAuthContext();
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-600">
+        <div className="min-h-screen flex items-center justify-center">
             <div className="flex flex-col space-y-4 text-center">
                 <div>{authData.firstName}</div>
-                <Link to="/signup">Sign up</Link><br/>
-                <Link to="/login">Login</Link><br/>
-                <Button onClick={logout}>Log out</Button>
-                <SearchBar/>
             </div>
         </div>
     );
