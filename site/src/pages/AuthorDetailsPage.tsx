@@ -57,13 +57,13 @@ const AuthorDetailsPage: React.FC<{}> = () => {
                 (
                     <div className="flex items-start md:flex-row flex-col">
                         {/* Left side of page */}
-                        <div className="fixed top-24 left-20 w-1/4 max-w-xs z-40">
+                        <div className="fixed top-24 left-20 w-1/3 max-w-xs z-40">
                             {authorDetails.image_url ? <img
                                 src={authorDetails.image_url}
                                 alt={authorDetails.name ? authorDetails.name : authorDetails.id.toString()}
-                                className="w-full h-auto object-contain rounded"
+                                className="w-full rounded shadow-md aspect-[2/3] object-cover"
                             /> : <div className="w-36 aspect-[2/3] bg-gray-200 rounded" />}
-                            <Button className="w-full my-3 bg-primary text-primary-foreground">WANT TO READ</Button>
+                            {/*<Button className="w-full my-3 bg-primary text-primary-foreground">WANT TO READ</Button>*/}
                         </div>
 
 
@@ -71,12 +71,12 @@ const AuthorDetailsPage: React.FC<{}> = () => {
                         <div className="flex flex-col pb-3 w-full ml-[30%] mt-16 gap-y-10">
                             <div className="flex flex-col gap-y-2">
                                 <div className="text-xl md:text-2xl tracking-wide">{authorDetails.name}</div> {/* Title */}
-                                <Separator/>
+                                <Separator className="bg-primary"/>
 
                                 {/* Author info */}
                                 <div className="flex flex-col mx-4 mt-2 gap-y-4">
                                     {/* Author bio */}
-                                    <div className="text-base font-light tracking-wide">{authorDetails.bio?.replace(/https?:\/\/[^\s"]+/g, '').trim()}</div>
+                                    <div className="leading-relaxed text-base max-w-prose">{authorDetails.bio?.replace(/https?:\/\/[^\s"]+/g, '').trim()}</div>
 
                                     <div className="grid grid-cols-10 gap-y-1.5 text-sm items-start tracking-wide">
                                         {/*{authorDetails.born_date || authorDetails.born_year ? <div className="col-span-1 text-tabs-muted-foreground">Born</div> : null}*/}
@@ -88,7 +88,7 @@ const AuthorDetailsPage: React.FC<{}> = () => {
                             {/* Author books */}
                             <div className="flex flex-col gap-y-2">
                                 <div className="mt-10 text-base md:text-base tracking-wide">BOOKS</div>
-                                <Separator/>
+                                <Separator className="bg-primary"/>
                                 <div className="mx-2">
                                     <div className="text-sm text-tabs-foreground font-extralight flex flex-row gap-x-2">
                                         {authorDetails.avg_rating ? <StarRating value={Math.trunc(authorDetails.avg_rating * 100) / 100} readOnly={true} size="sm" fillColor="text-star-color fill-star-color"/>

@@ -12,7 +12,7 @@ const AuthorBookCard: React.FC<{book: AuthorBookModel}> = ({ book }) => {
     }
 
     return (
-        <div className="w-full overflow-hidden p-0 min-h-[6rem] bg-card border-card-border">
+        <div className="w-full overflow-hidden p-0 min-h-[6rem] bg-card border-card-border ">
             <div className="flex gap-6 items-stretch">
                 {book.image_url ? (
                     <img
