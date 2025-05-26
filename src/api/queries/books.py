@@ -159,9 +159,47 @@ query GetBookDetails($editionId: Int!) {
 """
 
 GET_TRENDING_BOOKS = """
-query GetTrending($from: date!, $to: date!) {
-    books_trending(from: $from, to: $to, limit: 10, offset: 0) {
+query GetTrending($from: date!, $to: date!, $offset: Int!) {
+    books_trending(from: $from, to: $to, limit: 10, offset: $offset) {
         ids
+    }
+}
+"""
+
+GET_UPCOMING_BOOKS = """
+query GetUpcoming($from: date!, $to: date!, $offset: Int!) {
+    books(where: {release_date: {_gte: $from, _lte: $to}} order_by: {users_count: desc} limit: 10 offset: $offset) {
+        title
+        id
+        release_date
+        users_count
+        pages
+        rating
+        ratings_count
+        image {
+            url
+        }
+        featured_book_series {
+            series_id
+            position
+            series {
+                books_count
+                name
+                primary_books_count
+            }
+        }
+        contributions {
+            author {
+                id
+                name
+            }
+            contribution
+        }
+        taggings(limit: 10) {
+            tag {
+                tag
+            }
+        }
     }
 }
 """

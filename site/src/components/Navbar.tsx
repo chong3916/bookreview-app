@@ -50,7 +50,7 @@ const Navbar: React.FC<{}> = () => {
                                         </li>
                                         <li>
                                             <NavigationMenuLink asChild className="flex">
-                                                <Link to="/new" className="group flex items-center gap-2 text-sm p-2 rounded-md">
+                                                <Link to="/upcoming" className="group flex items-center gap-2 text-sm p-2 rounded-md">
                                                     <div className="w-10 h-10 p-2 rounded-md border bg-foreground/5 border-background text-[#22c55e] group-hover:bg-[#22c55e] group-hover:border-[#22c55e] group-hover:text-background transition-colors">
                                                         <CalendarCheck className="w-full h-full stroke-current" />
                                                     </div>

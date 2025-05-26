@@ -41,9 +41,13 @@ def fetch_book_editions(book_id: int, offset: int) -> requests.Response:
     variables = {"bookId": book_id, "offset": offset}
     return graphql_request(GET_BOOK_EDITIONS, variables)
 
-def fetch_trending_books(from_str, to_str)  -> requests.Response:
-    variables = {"from": from_str, "to": to_str}
+def fetch_trending_books(from_str, to_str, offset: int) -> requests.Response:
+    variables = {"from": from_str, "to": to_str, "offset": offset}
     return graphql_request(GET_TRENDING_BOOKS, variables)
+
+def fetch_upcoming_books(from_str, to_str, offset: int) -> requests.Response:
+    variables = {"from": from_str, "to": to_str, "offset": offset}
+    return graphql_request(GET_UPCOMING_BOOKS, variables)
 
 # class BookTermSearchView(APIView):
 #     def get(self, request):
@@ -177,9 +181,13 @@ class BookDetailView(APIView):
 
 class BookEditionsView(APIView):
     def get(self, request, book_id):
-        page_number = self.request.GET.get("page", 1)
-        offset = int(page_number - 1) * 10
+        page = request.query_params.get("page", 1)
+        try:
+            page = int(page)
+        except ValueError:
+            return Response({"error": "startIndex must be an integer"}, status=400)
 
+        offset = max(page - 1, 0) * 10
         response = fetch_book_editions(book_id, offset)
 
         if response.status_code != 200:
@@ -207,11 +215,19 @@ class TrendingView(APIView):
         if duration not in durations:
             return Response({"error": "Invalid duration"}, status=400)
 
+        page = request.query_params.get("page", 1)
+        try:
+            page = int(page)
+        except ValueError:
+            return Response({"error": "startIndex must be an integer"}, status=400)
+
+        offset = max(page - 1, 0) * 10
+
         from_date = today - durations[duration]
         to_str = today.strftime("%Y-%m-%d")
         from_str = from_date.strftime("%Y-%m-%d")
 
-        response = fetch_trending_books(from_str, to_str)
+        response = fetch_trending_books(from_str, to_str, offset)
 
         if response.status_code != 200:
             return Response(
@@ -224,6 +240,8 @@ class TrendingView(APIView):
         trending_books = data.get("books_trending", {})
         ids = trending_books.get("ids") or []
         books = []
+
+        # Get trending book details
         with ThreadPoolExecutor(max_workers=10) as executor:
             futures = {executor.submit(fetch_book_basic, book_id): book_id for book_id in ids}
 
@@ -239,6 +257,56 @@ class TrendingView(APIView):
                     print(f"Failed to fetch book ID {futures[future]} - Status: {response.status_code}")
 
         return Response(books)
+
+class UpcomingView(APIView):
+    def get(self, request, duration):
+        today = date.today()
+        future_durations = {
+            "month": relativedelta(months=1),
+            "quarter": relativedelta(months=3),
+            "year": relativedelta(years=1)
+        }
+
+        page = request.query_params.get("page", 1)
+        try:
+            page = int(page)
+        except ValueError:
+            return Response({"error": "startIndex must be an integer"}, status=400)
+
+        offset = max(page - 1, 0) * 10
+
+        if duration == "recent":
+            # Past 1 month
+            from_date = today - relativedelta(months=1)
+            to_date = today
+        elif duration in future_durations:
+            # Future time ranges
+            from_date = today
+            to_date = today + future_durations[duration]
+        else:
+            return Response({"error": "Invalid duration"}, status=400)
+
+        from_str = from_date.strftime("%Y-%m-%d")
+        to_str = to_date.strftime("%Y-%m-%d")
+
+        response = fetch_upcoming_books(from_str, to_str, offset)
+
+        if response.status_code != 200:
+            return Response(
+                {"error": "GraphQL request failed", "details": response.text},
+                status=response.status_code
+            )
+
+        responseData = response.json()
+        data = responseData.get("data", {})
+        books = data.get("books", [])
+
+        for book in books:
+            flatten_book_response(book)
+            flatten_featured_series(book)
+
+        return Response(books)
+
 
 def flatten_book_response(book_data):
     if not book_data:
@@ -256,14 +324,33 @@ def flatten_book_response(book_data):
     return book_data
 
 # Flatten functions
+def flatten_featured_series(book_data):
+    featured_series = book_data.get("featured_book_series", {})
+    if not featured_series:
+        return
+    series = featured_series.get("series", {})
+    series_books_count = series.get("books_count", None)
+    series_primary_books_count = series.get("primary_books_count", None)
+    series_name = series.get("name", None)
+
+    book_data["featured_book_series"]["series_books_count"] = series_books_count
+    book_data["featured_book_series"]["series_primary_books_count"] = series_primary_books_count
+    book_data["featured_book_series"]["name"] = series_name
+    book_data["featured_book_series"].pop("series", None)
+
 def flatten_image(book_data):
     book_data["image_url"] = book_data.get("image", {}).get("url")
     book_data.pop("image", None)
 
 def flatten_tags(book_data):
-    taggings = book_data.get("taggings_aggregate", {}).get("nodes", [])
+    if book_data.get("taggings_aggregate"):
+        taggings = book_data.get("taggings_aggregate", {}).get("nodes", [])
+        book_data.pop("taggings_aggregate", None)
+    else:
+        taggings = book_data.get("taggings", [])
+        book_data.pop("taggings", None)
+
     book_data["tags"] = [node.get("tag", {}).get("tag") for node in taggings if node.get("tag")]
-    book_data.pop("taggings_aggregate", None)
 
 def flatten_contributions(book_data):
     contributions = book_data.get("contributions", [])

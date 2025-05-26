@@ -1,13 +1,13 @@
-import {Card} from "@/components/ui/card.tsx";
-import {Badge} from "@/components/ui/badge"
 import {Link} from "react-router";
-import type {BookDocument} from "@/components/types/BookModel.ts";
-import {useEffect} from "react";
+import {Card} from "@/components/ui/card.tsx";
 import StarRating from "@/components/StarRating.tsx";
+import {Badge} from "@/components/ui/badge.tsx";
+import type {UpcomingModel} from "@/components/types/UpcomingModel.ts";
 
-const BookCard: React.FC<{ book: BookDocument }> = ({book}) => {
-    const authors: string[] = book.contributions?.map((contributor) => {
-        const name = contributor.author.name;
+
+const UpcomingCard: React.FC<{ book: UpcomingModel }> = ({ book }  ) => {
+    const authors: string[] = book.authors?.map((contributor) => {
+        const name = contributor.name;
         const contribution = contributor.contribution;
         return contribution ? `${name} (${contribution})` : name;
     }) ?? [];
@@ -25,27 +25,25 @@ const BookCard: React.FC<{ book: BookDocument }> = ({book}) => {
         });
     }
 
-    useEffect(() => {
-        console.log(book)
-    }, [])
-
     return (
         <Card className="w-full overflow-hidden p-0 min-h-[12rem] rounded-sm bg-card border-card-border">
             <div className="flex gap-6 items-stretch">
-                {book.image ? (
+                {book.image_url ? (
                     <img
-                        src={book.image.url}
+                        src={book.image_url}
                         alt={book.title}
                         className="object-cover w-36 h-auto"
                     />
                 ) : (
                     <div className="w-36 aspect-[2/3] bg-gray-200"/>
                 )}
+
                 <div className="flex flex-col justify-center pr-6 py-4 space-y-3">
                     <Link
                         to={`/books/${book.id}`}
                         className="text-xl font-semibold hover:text-muted-foreground tracking-wide"
                     >{book.title}</Link>
+
                     <div>
                         {authors.map((author, index) => (
                             <span key={author}>
@@ -57,15 +55,17 @@ const BookCard: React.FC<{ book: BookDocument }> = ({book}) => {
                             </span>
                         ))}
                     </div>
+
                     <div className="flex gap-1 text-xs text-muted-foreground font-thin">
                         {book.rating ? <StarRating value={Math.trunc(book.rating * 100) / 100} readOnly={true} size="sm" fillColor="text-star-color fill-star-color"/>
                             : <StarRating value={0} readOnly={true} size="sm" fillColor="text-star-color fill-star-color"/>}
                         {book.rating ? <div>{Math.trunc(book.rating * 100) / 100} avg rating - </div> : null}
                         <div>{book.ratings_count} ratings</div>
-                        {formattedDate ? (<div> - {publishStr} {formattedDate}</div>) : (book.release_year ? <div> - published {book.release_year}</div> : null)}
+                        {formattedDate ? <div> - {publishStr} {formattedDate}</div> : null}
                     </div>
-                    <div className="flex flex-wrap gap-1">
-                        {book.genres?.slice(0, 10).map((genre) => (
+
+                    <div className="flex flex-wrap gap-1 mt-1">
+                        {book.tags?.slice(0, 10).map((genre) => (
                             <Badge key={genre} variant="outline" className="text-badge-foreground hover:text-badge-hover cursor-pointer" style={{ borderRadius: '3px' }}>
                                 {genre}
                             </Badge>
@@ -77,4 +77,4 @@ const BookCard: React.FC<{ book: BookDocument }> = ({book}) => {
     )
 }
 
-export default BookCard;
+export default UpcomingCard;
