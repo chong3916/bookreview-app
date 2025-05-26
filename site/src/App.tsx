@@ -11,6 +11,7 @@ import BookDetailsPage from "@/pages/BookDetailsPage.tsx";
 import EditionsPage from "@/pages/EditionsPage.tsx";
 import Navbar from "@/components/Navbar.tsx";
 import TrendingPage from "@/pages/TrendingPage.tsx";
+import UpcomingPage from "@/pages/UpcomingPage.tsx";
 
 function App() {
     return (
@@ -25,6 +26,7 @@ function App() {
                                 <Route path="/signup" element={<SignupPage/>}/>
                                 <Route path="/search" element={<SearchResultsPage />} />
                                 <Route path="/trending/:duration?" element={<TrendingPage/>}/>
+                                <Route path="/upcoming/:duration?" element={<UpcomingPage/>}/>
                                 <Route path="/login" element={<LoginPage/>}/>
                                 <Route path="/editions/:editionId" element={<EditionsPage />} />
                                 <Route path="/" element={<HomePage/>}/>
