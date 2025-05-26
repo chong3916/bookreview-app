@@ -12,6 +12,19 @@ const BookCard: React.FC<{ book: BookDocument }> = ({book}) => {
         return contribution ? `${name} (${contribution})` : name;
     }) ?? [];
 
+    let formattedDate = null;
+    let publishStr = "published"
+    if (book.release_date) {
+        const date = new Date(book.release_date);
+        const today = new Date();
+        if (date > today) publishStr = "publishing"
+        formattedDate = date.toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+        });
+    }
+
     useEffect(() => {
         console.log(book)
     }, [])
@@ -45,10 +58,11 @@ const BookCard: React.FC<{ book: BookDocument }> = ({book}) => {
                         ))}
                     </div>
                     <div className="flex gap-1 text-xs text-muted-foreground font-thin">
-                        <StarRating value={Math.trunc(book.rating * 100) / 100} readOnly={true} size="sm" fillColor="text-star-color fill-star-color"/>
-                        <div>{Math.trunc(book.rating * 100) / 100} avg rating - </div>
-                        <div>{book.ratings_count} ratings - </div>
-                        <div>published {book.release_year}</div>
+                        {book.rating ? <StarRating value={Math.trunc(book.rating * 100) / 100} readOnly={true} size="sm" fillColor="text-star-color fill-star-color"/>
+                            : <StarRating value={0} readOnly={true} size="sm" fillColor="text-star-color fill-star-color"/>}
+                        {book.rating ? <div>{Math.trunc(book.rating * 100) / 100} avg rating - </div> : null}
+                        <div>{book.ratings_count} ratings</div>
+                        {formattedDate ? (<div> - {publishStr} {formattedDate}</div>) : (book.release_year ? <div> - published {book.release_year}</div> : null)}
                     </div>
                     <div className="flex flex-wrap gap-1">
                         {book.genres?.slice(0, 10).map((genre) => (

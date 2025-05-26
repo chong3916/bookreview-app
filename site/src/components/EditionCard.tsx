@@ -13,8 +13,11 @@ const EditionCard: React.FC<EditionCardProps> = ({ edition }) => {
     }) ?? [];
 
     let formattedDate = null;
+    let publishStr = "Published"
     if (edition.release_date) {
         const date = new Date(edition.release_date);
+        const today = new Date();
+        if (date > today) publishStr = "Publishing"
         formattedDate = date.toLocaleDateString("en-US", {
             year: "numeric",
             month: "long",
@@ -40,7 +43,7 @@ const EditionCard: React.FC<EditionCardProps> = ({ edition }) => {
                         className="text-xl font-semibold hover:text-muted-foreground tracking-wide text-slate-200 pb-3"
                     >{edition.title}</Link>
                     <div className="text-muted-foreground text-sm font-light">
-                        Published {formattedDate} {edition.publisher_name ? "by" : null} {edition.publisher_name}
+                        {publishStr} {formattedDate} {edition.publisher_name ? "by" : null} {edition.publisher_name}
                     </div>
                     <div className="text-muted-foreground text-sm font-light">
                         {edition.pages} {edition.pages ? "pages" : null}{edition.edition_information ? "," : null} {edition.edition_information}

@@ -1,22 +1,28 @@
-import type {TrendingModel} from "@/components/types/TrendingModel.ts";
 import {Link} from "react-router";
 import {Card} from "@/components/ui/card.tsx";
 import StarRating from "@/components/StarRating.tsx";
 import {Badge} from "@/components/ui/badge.tsx";
+import type {UpcomingModel} from "@/components/types/UpcomingModel.ts";
 
 
-const TrendingCard: React.FC<{ book: TrendingModel }> = ({ book }  ) => {
+const UpcomingCard: React.FC<{ book: UpcomingModel }> = ({ book }  ) => {
     const authors: string[] = book.authors?.map((contributor) => {
         const name = contributor.name;
         const contribution = contributor.contribution;
         return contribution ? `${name} (${contribution})` : name;
     }) ?? [];
 
+    let formattedDate = null;
     let publishStr = "published"
-    if (book.release_year) {
-        const date = new Date(book.release_year, 0, 1);
+    if (book.release_date) {
+        const date = new Date(book.release_date);
         const today = new Date();
-        if (date.getFullYear() > today.getFullYear()) publishStr = "publishing"
+        if (date > today) publishStr = "publishing"
+        formattedDate = date.toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+        });
     }
 
     return (
@@ -55,7 +61,7 @@ const TrendingCard: React.FC<{ book: TrendingModel }> = ({ book }  ) => {
                             : <StarRating value={0} readOnly={true} size="sm" fillColor="text-star-color fill-star-color"/>}
                         {book.rating ? <div>{Math.trunc(book.rating * 100) / 100} avg rating - </div> : null}
                         <div>{book.ratings_count} ratings</div>
-                        {book.release_year ? <div> - {publishStr} {book.release_year}</div> : null}
+                        {formattedDate ? <div> - {publishStr} {formattedDate}</div> : null}
                     </div>
 
                     <div className="flex flex-wrap gap-1 mt-1">
@@ -71,4 +77,4 @@ const TrendingCard: React.FC<{ book: TrendingModel }> = ({ book }  ) => {
     )
 }
 
-export default TrendingCard;
+export default UpcomingCard;
