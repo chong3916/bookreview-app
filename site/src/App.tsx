@@ -12,6 +12,7 @@ import EditionsPage from "@/pages/EditionsPage.tsx";
 import Navbar from "@/components/Navbar.tsx";
 import TrendingPage from "@/pages/TrendingPage.tsx";
 import UpcomingPage from "@/pages/UpcomingPage.tsx";
+import AuthorDetailsPage from "@/pages/AuthorDetailsPage.tsx";
 
 function App() {
     return (
@@ -22,7 +23,8 @@ function App() {
                         <div className="min-h-screen">
                             <Navbar/>
                             <Routes>
-                                <Route path="/books/:bookId" element={<BookDetailsPage/>}/>
+                                <Route path="/book/:bookId" element={<BookDetailsPage/>}/>
+                                <Route path="/author/:authorId" element={<AuthorDetailsPage/>}/>
                                 <Route path="/signup" element={<SignupPage/>}/>
                                 <Route path="/search" element={<SearchResultsPage />} />
                                 <Route path="/trending/:duration?" element={<TrendingPage/>}/>

@@ -39,7 +39,7 @@ const EditionCard: React.FC<EditionCardProps> = ({ edition }) => {
                 )}
                 <div className="flex flex-col justify-center pr-6 py-4 space-y-1">
                     <Link
-                        to={`/books/${edition.book_id}`}
+                        to={`/book/${edition.book_id}`}
                         className="text-xl font-semibold hover:text-muted-foreground tracking-wide text-slate-200 pb-3"
                     >{edition.title}</Link>
                     <div className="text-muted-foreground text-sm font-light">

@@ -1,11 +1,9 @@
-const searchBook = async (query: string, title: string, author: string, subject: string, page: number) => {
-    const startIndex = Math.max((page - 1) * 10, 0);
+const getSearch = async (query: string, page: number, type: string) => {
+    const paramPage = Math.max(page, 1);
     const params = new URLSearchParams();
     if (query) params.append("q", query);
-    if (title) params.append("title", title);
-    if (author) params.append("author", author);
-    if (subject) params.append("subject", subject);
-    params.append("startIndex", startIndex.toString());
+    if (type) params.append("type", type);
+    params.append("page", paramPage.toString());
 
     const url = `/api/books/search?${params.toString()}`;
     try {
@@ -85,7 +83,7 @@ const getUpcoming = async (duration: string, page: number)=> {
 }
 
 export const bookService = {
-    searchBook,
+    getSearch,
     getBook,
     getEditions,
     getTrending,

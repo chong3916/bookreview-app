@@ -14,7 +14,7 @@ const BooksCarousel: React.FC<BooksCarouselProps> = ({ books, side }) => {
             <CarouselContent className="-ml-1">
                 {books.map((book, index) => (
                     <CarouselItem key={index} className="pl-1 md:basis-1/4 lg:basis-1/5">
-                        <Link to={`/books/${book.book_id}`}>
+                        <Link to={`/book/${book.book_id}`}>
                             <TooltipProvider>
                                 <Tooltip>
                                     <TooltipTrigger asChild>
