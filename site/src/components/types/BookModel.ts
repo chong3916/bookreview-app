@@ -10,7 +10,8 @@
 
 export interface Author {
     id: number,
-    name: string
+    name: string,
+    contribution?: string
 }
 
 export interface Contribution {

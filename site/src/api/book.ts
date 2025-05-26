@@ -52,8 +52,25 @@ const getEditions = async (editionId: string, page: number) => {
     }
 }
 
+const getTrending = async (duration: string, page: number)=> {
+    const params = new URLSearchParams();
+    params.append("page", page.toString());
+
+    try {
+        const response = await fetch(`/api/books/trending/${duration}?${params.toString()}`);
+        console.log(response);
+        if (!response.ok) {
+            throw new Error("Failed to fetch");
+        }
+        return response.json();
+    } catch (e) {
+        console.error("Error getting book editions:", e)
+    }
+}
+
 export const bookService = {
     searchBook,
     getBook,
-    getEditions
+    getEditions,
+    getTrending
 }
