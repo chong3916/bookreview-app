@@ -1,15 +1,12 @@
 import {Link, useParams} from "react-router";
 import {useEffect, useState} from "react";
-import {testBookDetails} from "@/bookDetailsFixtures.ts";
 import {authorService} from "@/api/author.ts";
 import type AuthorDetailModel from "@/components/types/AuthorDetailModel.ts";
 import {testAuthorDetails} from "@/authorDetailsFixtures.ts";
 import {Button} from "@/components/ui/button.tsx";
 import {Separator} from "@/components/ui/separator.tsx";
-import StarRating from "@/components/StarRating.tsx";
-import BookDetailsTabs from "@/components/BookDetailsTabs.tsx";
-import BookDetailsSeries from "@/components/BookDetailsSeries.tsx";
 import AuthorBookCard from "@/components/AuthorBookCard.tsx";
+import StarRating from "@/components/StarRating.tsx";
 
 const AuthorDetailsPage: React.FC<{}> = () => {
     const {authorId} = useParams();
@@ -77,24 +74,26 @@ const AuthorDetailsPage: React.FC<{}> = () => {
                                 <Separator/>
 
                                 {/* Author info */}
-                                <div className="mx-4 mt-2">
-                                    <div className="grid grid-cols-10 gap-y-1.5 text-sm items-start">
+                                <div className="flex flex-col mx-4 mt-2 gap-y-4">
+                                    {/* Author bio */}
+                                    <div className="text-base font-light tracking-wide">{authorDetails.bio?.replace(/https?:\/\/[^\s"]+/g, '').trim()}</div>
+
+                                    <div className="grid grid-cols-10 gap-y-1.5 text-sm items-start tracking-wide">
                                         {/*{authorDetails.born_date || authorDetails.born_year ? <div className="col-span-1 text-tabs-muted-foreground">Born</div> : null}*/}
                                         <div className="col-span-1 text-tabs-muted-foreground">Links: </div>
                                         <div className="col-span-9 text-tabs-foreground grid grid-cols-1">{urls?.map((url) => <Link to={url} target="_blank">{url}</Link>)}</div>
                                     </div>
-
-                                    {/* Author bio */}
-                                    <div className="text-base font-light tracking-wide mt-3">{authorDetails.bio?.replace(/https?:\/\/[^\s"]+/g, '').trim()}</div>
                                 </div>
                             </div>
                             {/* Author books */}
                             <div className="flex flex-col gap-y-2">
-                                <div className="mt-10 text-base md:text-base tracking-wide">{authorDetails.name?.toUpperCase()} BOOKS</div>
+                                <div className="mt-10 text-base md:text-base tracking-wide">BOOKS</div>
                                 <Separator/>
                                 <div className="mx-2">
-                                    <div className="text-xs text-tabs-foreground font-light">
-                                        {authorDetails.avg_rating ? `Avg rating: ${Math.trunc(authorDetails.avg_rating * 100) / 100} - `: null}{authorDetails.ratings_count} ratings - {authorDetails.reviews_count} reviews - {authorDetails.books_count} works
+                                    <div className="text-sm text-tabs-foreground font-extralight flex flex-row gap-x-2">
+                                        {authorDetails.avg_rating ? <StarRating value={Math.trunc(authorDetails.avg_rating * 100) / 100} readOnly={true} size="sm" fillColor="text-star-color fill-star-color"/>
+                                            : <StarRating value={0} readOnly={true} size="sm" fillColor="text-star-color fill-star-color"/>}
+                                        {authorDetails.avg_rating ? `Total avg ratings: ${Math.trunc(authorDetails.avg_rating * 100) / 100} - `: null}{authorDetails.ratings_count} ratings - {authorDetails.reviews_count} reviews - {authorDetails.books_count} works
                                     </div>
                                 </div>
                                 <div className="flex flex-col mx-4 mt-2 gap-y-3">
@@ -103,28 +102,6 @@ const AuthorDetailsPage: React.FC<{}> = () => {
                                     )}
                                 </div>
                             </div>
-                            {/*<div className="flex flex-col"> /!* Page and publish date *!/*/}
-                            {/*    <div className="flex flex-row h-3 items-center space-x-2 text-sm">*/}
-                            {/*        {<div className="font-thin">{authorDetails.avg_rating} avg rating</div>}*/}
-                            {/*        <Separator orientation="vertical" className="bg-slate-600"/>*/}
-                            {/*        <div className="font-thin">First published {bookDetails.release_year}</div>*/}
-                            {/*    </div>*/}
-                            {/*</div>*/}
-
-                            {/*<div className="flex flex-row my-3 items-center tracking-wide text-sm h-3"> /!* Reviews/Ratings *!/*/}
-                            {/*    <div className="mr-2"><StarRating value={Math.trunc(bookDetails.rating * 100) / 100} readOnly={true} size="md" fillColor="text-star-color fill-star-color"/></div>*/}
-                            {/*    <div className="mr-2">{Math.trunc(bookDetails.rating * 100) / 100}</div>*/}
-                            {/*    <Separator orientation="vertical"/>*/}
-                            {/*    <div className="m-2">{bookDetails.reviews_count}</div>*/}
-                            {/*    <div className="text-slate-500">RATINGS</div>*/}
-                            {/*</div>*/}
-
-                            {/* Tabs */}
-                            {/*<BookDetailsTabs bookDetails={bookDetails}/>*/}
-
-                            {/* Series */}
-                            {/*{bookDetails.featured_book_series?.series ?*/}
-                            {/*    <BookDetailsSeries series={bookDetails.featured_book_series.series} position={bookDetails.featured_book_series.position}/> : null}*/}
                         </div>
                     </div>)
                 : null}
