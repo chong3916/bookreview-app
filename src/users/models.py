@@ -23,6 +23,7 @@ class CustomUserManager(BaseUserManager):
 
 class CustomUser(AbstractUser, PermissionsMixin):
     # Add custom fields here as needed
+    username = None
     email = models.EmailField(unique=True)
     first_name = models.CharField(max_length=30, unique=False)
     last_name = models.CharField(max_length=30, blank=True, null=True)
@@ -34,6 +35,10 @@ class CustomUser(AbstractUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False)
 
     followers = models.ManyToManyField("self", symmetrical=False, related_name="following", blank=True)
+
+    @property
+    def book_list_ids(self):
+        return list(self.lists.values_list('id', flat=True))
 
     objects = CustomUserManager()
 

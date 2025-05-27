@@ -32,4 +32,5 @@ urlpatterns = [
     path('api/series/<str:series_id>', BookSeriesView.as_view(), name='book-series'),
     path('api/tagging/', include('api.urls.tag_urls')),
     path('api/gemini/', include('api.urls.gemini_urls')),
+    path('api/booklist/', include('api.urls.book_list_urls')),
 ]
