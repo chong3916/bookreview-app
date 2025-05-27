@@ -20,7 +20,7 @@ const BooksCarousel: React.FC<BooksCarouselProps> = ({ books, side }) => {
                                     <TooltipTrigger asChild>
                                         <div className="p-1">
                                             {book.image_url ? <img
-                                                className="w-full h-auto object-contain rounded-sm"
+                                                className="w-full h-auto object-contain rounded-sm hover:border-accent hover:border-2"
                                                 src={book.image_url}
                                                 alt={book.title}
                                             /> : <div className="w-full aspect-[2/3] bg-gray-200 rounded-sm"/>}
