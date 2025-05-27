@@ -33,13 +33,19 @@ const BookCard: React.FC<{ book: BookDocument }> = ({ book }) => {
         <Card className="w-full overflow-hidden p-0 min-h-[12rem] rounded-sm bg-card border-card-border">
             <div className="flex gap-6 items-stretch">
                 {book.image && book.image.url? (
-                    <img
-                        src={book.image.url}
-                        alt={book.title}
-                        className="object-cover w-36 h-auto"
-                    />
+                    <div className="w-36 aspect-[2/3] bg-card shrink-0 rounded-sm">
+                        <Link to={`/book/${book.id}`} className="block w-full h-auto">
+                            <img
+                                src={book.image.url}
+                                alt={book.title}
+                                className="w-full h-full object-cover rounded-sm"
+                            />
+                        </Link>
+                    </div>
                 ) : (
-                    <div className="w-36 aspect-[2/3] bg-gray-200"/>
+                    <Link to={`/book/${book.id}`} className="w-36 aspect-[2/3] rounded-sm flex-shrink-0 flex-grow-0">
+                        <div className="w-36 aspect-[2/3] bg-slate-200 object-cover rounded-sm" />
+                    </Link>
                 )}
                 <div className="flex flex-col justify-center pr-6 py-4 space-y-3">
                     <Link
@@ -48,10 +54,10 @@ const BookCard: React.FC<{ book: BookDocument }> = ({ book }) => {
                     >{book.title}</Link>
                     <div>
                         {authors.map((author, index) => (
-                            <span key={author}>
+                            <span key={author} className="text-secondary-foreground">
                                 <Link
                                     to={`/author/${(book.contributions?.[index]?.author?.id ?? "")}`}
-                                    className="text-secondary-foreground hover:text-muted-foreground font-light"
+                                    className="hover:text-muted-foreground/70 font-light"
                                 >{author}</Link>
                                 {index < authors.length - 1 && ', '}
                             </span>

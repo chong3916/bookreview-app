@@ -7,20 +7,26 @@ const AuthorCard: React.FC<{author: AuthorDocument}> = ({ author }) => {
         <Card className="w-full overflow-hidden p-0 min-h-[12rem] rounded-sm bg-card border-card-border">
             <div className="flex gap-6 items-stretch">
                 {author.image && author.image.url? (
-                    <img
-                        src={author.image.url}
-                        alt={author.name}
-                        className="object-cover w-36 h-auto"
-                    />
+                    <div className="w-36 aspect-[2/3] bg-card rounded-sm flex-shrink-0 flex-grow-0">
+                        <Link to={`/author/${author.id}`} className="block w-full h-auto">
+                            <img
+                                src={author.image.url}
+                                alt={author.name}
+                                className="w-full h-full object-cover rounded-sm"
+                            />
+                        </Link>
+                    </div>
                 ) : (
-                    <div className="w-36 aspect-[2/3] bg-gray-200"/>
+                    <Link to={`/author/${author.id}`} className="w-36 aspect-[2/3] rounded-sm flex-shrink-0 flex-grow-0">
+                        <div className="w-36 aspect-[2/3] bg-slate-200 object-cover rounded-sm" />
+                    </Link>
                 )}
-                <div className="flex flex-col justify-center pr-6 py-4 space-y-3">
+                <div className="flex flex-col justify-center pr-6 py-4 space-y-3 flex-grow min-w-0">
                     <Link
                         to={`/author/${author.id}`}
                         className="text-xl font-semibold hover:text-muted-foreground tracking-wide"
                     >{author.name}</Link>
-                    <div>
+                    <div className="truncate overflow-hidden whitespace-nowrap text-sm text-muted-foreground">
                         {author.books.slice(0, 3).map((book, index) => (
                             <span key={index}>
                                 <Link
@@ -29,24 +35,10 @@ const AuthorCard: React.FC<{author: AuthorDocument}> = ({ author }) => {
                                         .replace(/\s+/g, '+')}`}
                                     className="text-secondary-foreground hover:text-muted-foreground font-light"
                                 >{book}</Link>
-                                {index < author.books.length - 1 && ', '}
+                                {index < Math.min(author.books.length - 1, 2) && ', '}
                             </span>
                         ))}
                     </div>
-                    {/*<div className="flex gap-1 text-xs text-muted-foreground font-thin">*/}
-                    {/*    {book.rating ? <StarRating value={Math.trunc(book.rating * 100) / 100} readOnly={true} size="sm" fillColor="text-star-color fill-star-color"/>*/}
-                    {/*        : <StarRating value={0} readOnly={true} size="sm" fillColor="text-star-color fill-star-color"/>}*/}
-                    {/*    {book.rating ? <div>{Math.trunc(book.rating * 100) / 100} avg rating - </div> : null}*/}
-                    {/*    <div>{book.ratings_count} ratings</div>*/}
-                    {/*    {formattedDate ? (<div> - {publishStr} {formattedDate}</div>) : (book.release_year ? <div> - published {book.release_year}</div> : null)}*/}
-                    {/*</div>*/}
-                    {/*<div className="flex flex-wrap gap-1">*/}
-                    {/*    {book.genres?.slice(0, 10).map((genre) => (*/}
-                    {/*        <Badge key={genre} variant="outline" className="text-badge-foreground hover:text-badge-hover cursor-pointer" style={{ borderRadius: '3px' }}>*/}
-                    {/*            {genre}*/}
-                    {/*        </Badge>*/}
-                    {/*    ))}*/}
-                    {/*</div>*/}
                 </div>
             </div>
         </Card>
