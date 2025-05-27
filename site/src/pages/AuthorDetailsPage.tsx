@@ -71,7 +71,7 @@ const AuthorDetailsPage: React.FC<{}> = () => {
                         <div className="flex flex-col pb-3 w-full ml-[30%] mt-16 gap-y-10">
                             <div className="flex flex-col gap-y-2">
                                 <div className="text-xl md:text-2xl tracking-wide">{authorDetails.name}</div> {/* Title */}
-                                <Separator className="bg-primary"/>
+                                <Separator />
 
                                 {/* Author info */}
                                 <div className="flex flex-col mx-4 mt-2 gap-y-4">
@@ -88,7 +88,7 @@ const AuthorDetailsPage: React.FC<{}> = () => {
                             {/* Author books */}
                             <div className="flex flex-col gap-y-2">
                                 <div className="mt-10 text-base md:text-base tracking-wide">BOOKS</div>
-                                <Separator className="bg-primary"/>
+                                <Separator />
                                 <div className="mx-2">
                                     <div className="text-sm text-tabs-foreground font-extralight flex flex-row gap-x-2">
                                         {authorDetails.avg_rating ? <StarRating value={Math.trunc(authorDetails.avg_rating * 100) / 100} readOnly={true} size="sm" fillColor="text-star-color fill-star-color"/>

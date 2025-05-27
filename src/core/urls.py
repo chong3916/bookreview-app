@@ -17,6 +17,7 @@ from django.contrib import admin
 from django.urls import path, include
 
 from api.views.author_views import AuthorDetailView
+from api.views.book_views import BookSeriesView, BookEditionsView
 from api.views.user_views import ActivateUserView, RefreshTokenView
 
 urlpatterns = [
@@ -26,6 +27,7 @@ urlpatterns = [
     path('api/token/refresh/', RefreshTokenView.as_view(), name='refresh_token'),
     path('admin/', admin.site.urls),
     path('api/books/', include('api.urls.book_urls')),
-    path('api/editions/', include('api.urls.edition_urls')),
-    path('api/author/<str:author_id>', AuthorDetailView.as_view(), name='author-detail')
+    path("api/editions/<str:book_id>", BookEditionsView.as_view(), name="book-editions"),
+    path('api/author/<str:author_id>', AuthorDetailView.as_view(), name='author-detail'),
+    path('api/series/<str:series_id>', BookSeriesView.as_view(), name='book-series')
 ]

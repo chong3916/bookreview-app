@@ -54,6 +54,10 @@ def fetch_upcoming_books(from_str, to_str, offset: int) -> requests.Response:
     variables = {"from": from_str, "to": to_str, "offset": offset}
     return graphql_request(GET_UPCOMING_BOOKS, variables)
 
+def fetch_book_series(series_id: int) -> requests.Response:
+    variables = {"seriesId": series_id}
+    return graphql_request(GET_SERIES_BY_ID, variables)
+
 # class BookTermSearchView(APIView):
 #     def get(self, request):
 #         query = request.query_params.get("q")
@@ -317,6 +321,36 @@ class UpcomingView(APIView):
 
         return Response(books)
 
+class BookSeriesView(APIView):
+    def get(self, request, series_id):
+        response = fetch_book_series(series_id)
+
+        if response.status_code != 200:
+            return Response(
+                {"error": "GraphQL request failed", "details": response.text},
+                status=response.status_code
+            )
+
+        responseData = response.json()
+        data = responseData.get("data", {})
+        series = data.get("series_by_pk", {})
+        books = series.get("book_series", [])
+        for book in books:
+            book_data = book.get("book", {})
+            book["image_url"] = book_data.get("image", {}).get("url", None)
+            book["pages"] = book_data.get("pages", None)
+            book["ratings_count"] = book_data.get("ratings_count", 0)
+            book["rating"] = book_data.get("rating", None)
+            book["users_count"] = book_data.get("users_count", 0)
+            book["title"] = book_data.get("title", None)
+            book["release_date"] = book_data.get("release_date", None)
+            book["release_year"] = book_data.get("release_year", None)
+            book["reviews_count"] = book_data.get("reviews_count", 0)
+            flatten_contributions(book_data)
+            book["authors"] = book_data.get("authors", None)
+            book.pop("book", None)
+
+        return Response(series)
 
 def flatten_book_response(book_data):
     if not book_data:
