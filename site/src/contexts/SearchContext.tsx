@@ -2,10 +2,8 @@ import React from "react"
 
 export type SearchContextType = {
     query: string,
-    title: string,
-    author: string,
-    subject: string,
-    page: number
+    page: number,
+    queryType: string
 }
 
 export const SearchContext = React.createContext<{
@@ -18,10 +16,8 @@ const { Provider } = SearchContext;
 export const SearchContextProvider = ({ children }: any) => {
     const [searchData, setSearchData] = React.useState<SearchContextType>({
         query: "",
-        title: "",
-        author: "",
-        subject: "",
-        page: 1
+        page: 1,
+        queryType: ""
     });
 
     const contextValue = {
