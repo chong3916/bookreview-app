@@ -1,18 +1,22 @@
 import {Link, useParams} from "react-router";
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import type BookDetailModel from "@/components/types/BookDetailModel.ts";
 import {bookService} from "@/api/book.ts";
 import {Separator} from "@/components/ui/separator"
 import {testBookDetails} from "@/bookDetailsFixtures.ts";
-import type {Contribution} from "@/components/types/BookModel.ts";
+import type {BookDocument, Contribution} from "@/components/types/BookModel.ts";
 import {Button} from "@/components/ui/button.tsx";
 import StarRating from "@/components/StarRating.tsx";
 import BookDetailsTabs from "@/components/BookDetailsTabs.tsx";
 import BookDetailsSeries from "@/components/BookDetailsSeries.tsx";
+import RecommendationCarousel from "@/components/RecommendationCarousel.tsx";
+import {testRecommendations} from "@/recommendationFixtures.ts";
 
 const BookDetailsPage: React.FC<{}> = () => {
     const {bookId} = useParams();
     const [bookDetails, setBookDetails] = useState<BookDetailModel | null>(null)
+    const [recommendations, setRecommendations] = useState<BookDocument[]>([])
+    const [loading, setLoading] = useState<boolean>(false);
 
     const authors: string[] = bookDetails?.contributions?.map((contributor: Contribution) => {
         const name = contributor.author.name;
@@ -23,7 +27,7 @@ const BookDetailsPage: React.FC<{}> = () => {
     useEffect(() => {
         console.log(bookId)
         if (!bookId) return;
-        getDetails(bookId);
+        getDetails(bookId).then((response) => getRecommendations(response.title))
     }, [bookId])
 
     const getDetails = async (id: string) => {
@@ -31,12 +35,30 @@ const BookDetailsPage: React.FC<{}> = () => {
         //     const response = await bookService.getBook(id);
         //     console.log(response)
         //     setBookDetails(response);
+        //     return response
         // } catch (err) {
         //     console.error("Error fetching book details:", err);
         // }
 
         setBookDetails(testBookDetails)
+        return testBookDetails
     }
+
+    const getRecommendations = async (title: string) => {
+        if(!title) return
+        try {
+            setLoading(true)
+            // const response = await bookService.getRecommendations(title);
+            // console.log(response)
+            // setRecommendations(response);
+            setRecommendations(testRecommendations)
+        } catch (err) {
+            console.error("Error fetching book recommendations:", err);
+        } finally {
+            setLoading(false);
+        }
+    }
+
 
     return (
         <div className="grid gap-y-8 py-10 mx-auto w-5/6">
@@ -90,6 +112,9 @@ const BookDetailsPage: React.FC<{}> = () => {
 
                             {/* Recommendations */}
                             <div>RECOMMENDATIONS</div>
+                            {loading ? (
+                                <div className="text-center text-muted-foreground py-10">Loading...</div>
+                            ) : (recommendations ? <RecommendationCarousel books={recommendations} side="top"/> : null)}
                         </div>
                     </div>)
                 : null}

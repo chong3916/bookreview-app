@@ -144,6 +144,24 @@ const getAllTags = async (page: number) => {
     }
 }
 
+const getRecommendations = async (title: string) => {
+    const params = new URLSearchParams();
+    if (title) params.append("q", title);
+    const url = `/api/gemini/recommendation?${params.toString()}`;
+
+    try {
+        const response = await fetch(url);
+
+        if (!response.ok) {
+            throw new Error("Failed to fetch");
+        }
+        return response.json();
+    } catch (e) {
+        console.error("Error during recommendation fetch:", e);
+        throw e;
+    }
+}
+
 export const bookService = {
     getSearch,
     getBook,
@@ -153,5 +171,6 @@ export const bookService = {
     getSeries,
     getAllGenres,
     getAllMoods,
-    getAllTags
+    getAllTags,
+    getRecommendations
 }
