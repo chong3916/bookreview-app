@@ -3,6 +3,7 @@ from .books import (GET_BOOK_BASIC_BY_BOOK_ID, GET_BOOK_DETAILS_BY_BOOK_ID,
 from .editions import GET_THIS_EDITION, GET_BOOK_EDITIONS
 from .search import GET_SEARCH_BOOK
 from .author import GET_AUTHOR_DETAILS
+from .series import GET_SERIES_BY_ID
 
 __all__ = [
     "GET_BOOK_BASIC_BY_BOOK_ID",
@@ -13,5 +14,6 @@ __all__ = [
     "GET_BOOK_EDITIONS",
     "GET_SEARCH_BOOK",
     "GET_UPCOMING_BOOKS",
-    "GET_AUTHOR_DETAILS"
+    "GET_AUTHOR_DETAILS",
+    "GET_SERIES_BY_ID"
 ]

@@ -82,10 +82,25 @@ const getUpcoming = async (duration: string, page: number)=> {
     }
 }
 
+const getSeries = async (seriesId: string) => {
+    try {
+        const response = await fetch(`/api/series/${seriesId}`);
+
+        if (!response.ok) {
+            throw new Error("Failed to fetch");
+        }
+        console.log(response)
+        return response.json();
+    } catch (e) {
+        console.error("Error getting book details:", e)
+    }
+}
+
 export const bookService = {
     getSearch,
     getBook,
     getEditions,
     getTrending,
-    getUpcoming
+    getUpcoming,
+    getSeries
 }
