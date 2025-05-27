@@ -3,7 +3,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from api.queries import *
-from api.views.book_views import flatten_image, graphql_request
+from api.views.book_views import flatten_image, graphql_request, safe_get
+
 
 def fetch_author_details(author_id: int):
     variables = {"authorId": author_id}
@@ -16,25 +17,28 @@ class AuthorDetailView(APIView):
             return Response({"error": "GraphQL request failed", "details": response.text}, status=response.status_code)
 
         data = response.json().get("data", {})
+
         # Get author and flatten image
-        author = data.get("authors_by_pk") or {}
+        author = safe_get(data, "authors_by_pk", default={})
         flatten_image(author)
 
         # Get books of author and flatten image
-        books = data.get("books", [])
+        books = safe_get(data, "books", default=[])
         for book in books:
             flatten_image(book)
         author["books"] = books
 
         # Get book aggregate and flatten
-        books_aggregate = data.get("books_aggregate", {})
-        aggregate = books_aggregate.get("aggregate", {})
-        avg_rating = aggregate.get("avg", {}).get("rating", None)
-        ratings_count_sum = aggregate.get("sum", {}).get("ratings_count", 0)
-        reviews_count_sum = aggregate.get("sum", {}).get("reviews_count", 0)
-        users_count_sum = aggregate.get("sum", {}).get("users_count", 0)
+        books_aggregate = safe_get(data, "books_aggregate", default={})
+        aggregate = safe_get(books_aggregate, "aggregate", default={})
+        avg_rating = safe_get(aggregate, "avg", "rating")
+        ratings_count_sum = safe_get(aggregate, "sum", "ratings_count", default=0)
+        reviews_count_sum = safe_get(aggregate, "sum", "reviews_count", default=0)
+        users_count_sum = safe_get(aggregate, "sum", "users_count", default=0)
+
         author["avg_rating"] = avg_rating
         author["ratings_count"] = ratings_count_sum
         author["reviews_count"] = reviews_count_sum
         author["users_count"] = users_count_sum
+
         return Response(author)

@@ -92,7 +92,55 @@ const getSeries = async (seriesId: string) => {
         console.log(response)
         return response.json();
     } catch (e) {
-        console.error("Error getting book details:", e)
+        console.error("Error getting series details:", e)
+    }
+}
+
+const getAllGenres = async (page: number) => {
+    const params = new URLSearchParams();
+    params.append("page", page.toString());
+
+    try {
+        const response = await fetch(`/api/tagging/genres?${params.toString()}`);
+        console.log(response);
+        if (!response.ok) {
+            throw new Error("Failed to fetch");
+        }
+        return response.json();
+    } catch (e) {
+        console.error("Error getting all genres:", e)
+    }
+}
+
+const getAllMoods = async (page: number) => {
+    const params = new URLSearchParams();
+    params.append("page", page.toString());
+
+    try {
+        const response = await fetch(`/api/tagging/moods?${params.toString()}`);
+        console.log(response);
+        if (!response.ok) {
+            throw new Error("Failed to fetch");
+        }
+        return response.json();
+    } catch (e) {
+        console.error("Error getting all genres:", e)
+    }
+}
+
+const getAllTags = async (page: number) => {
+    const params = new URLSearchParams();
+    params.append("page", page.toString());
+
+    try {
+        const response = await fetch(`/api/tagging/tags?${params.toString()}`);
+        console.log(response);
+        if (!response.ok) {
+            throw new Error("Failed to fetch");
+        }
+        return response.json();
+    } catch (e) {
+        console.error("Error getting all genres:", e)
     }
 }
 
@@ -102,5 +150,8 @@ export const bookService = {
     getEditions,
     getTrending,
     getUpcoming,
-    getSeries
+    getSeries,
+    getAllGenres,
+    getAllMoods,
+    getAllTags
 }

@@ -27,7 +27,8 @@ urlpatterns = [
     path('api/token/refresh/', RefreshTokenView.as_view(), name='refresh_token'),
     path('admin/', admin.site.urls),
     path('api/books/', include('api.urls.book_urls')),
-    path("api/editions/<str:book_id>", BookEditionsView.as_view(), name="book-editions"),
+    path('api/editions/<str:book_id>', BookEditionsView.as_view(), name='book-editions'),
     path('api/author/<str:author_id>', AuthorDetailView.as_view(), name='author-detail'),
-    path('api/series/<str:series_id>', BookSeriesView.as_view(), name='book-series')
+    path('api/series/<str:series_id>', BookSeriesView.as_view(), name='book-series'),
+    path('api/tagging/', include('api.urls.tag_urls'))
 ]

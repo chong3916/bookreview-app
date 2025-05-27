@@ -14,6 +14,7 @@ import TrendingPage from "@/pages/TrendingPage.tsx";
 import UpcomingPage from "@/pages/UpcomingPage.tsx";
 import AuthorDetailsPage from "@/pages/AuthorDetailsPage.tsx";
 import SeriesPage from "@/pages/SeriesPage.tsx";
+import BrowseTagsPage from "@/pages/BrowseTagsPage.tsx";
 
 function App() {
     return (
@@ -33,6 +34,7 @@ function App() {
                                 <Route path="/login" element={<LoginPage/>}/>
                                 <Route path="/editions/:editionId" element={<EditionsPage />} />
                                 <Route path="/series/:seriesId" element={<SeriesPage />} />
+                                <Route path="/browse/:browseType?" element={<BrowseTagsPage/>} />
                                 <Route path="/" element={<HomePage/>}/>
                             </Routes>
                         </div>

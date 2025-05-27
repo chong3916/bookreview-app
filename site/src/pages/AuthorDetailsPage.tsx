@@ -3,7 +3,6 @@ import {useEffect, useState} from "react";
 import {authorService} from "@/api/author.ts";
 import type AuthorDetailModel from "@/components/types/AuthorDetailModel.ts";
 import {testAuthorDetails} from "@/authorDetailsFixtures.ts";
-import {Button} from "@/components/ui/button.tsx";
 import {Separator} from "@/components/ui/separator.tsx";
 import AuthorBookCard from "@/components/AuthorBookCard.tsx";
 import StarRating from "@/components/StarRating.tsx";
@@ -98,7 +97,7 @@ const AuthorDetailsPage: React.FC<{}> = () => {
                                 </div>
                                 <div className="flex flex-col mx-4 mt-2 gap-y-3">
                                     {authorDetails.books.map((book) =>
-                                        <div className="flex flex-col gap-y-3"><AuthorBookCard book={book}/><Separator/></div>
+                                        <div className="flex flex-col gap-y-3" key={book.id}><AuthorBookCard book={book}/><Separator/></div>
                                     )}
                                 </div>
                             </div>

@@ -35,8 +35,8 @@ const SeriesPage: React.FC<{}> = () => {
                     <div className="text-sm tracking-wide text-muted-foreground font-light">{series.primary_books_count} primary works - {series.books_count} total works</div>
                     <Separator />
                     <div className="flex flex-col mx-4 mt-2 gap-y-3">
-                        {series.book_series?.map((book) =>
-                            <div className="flex flex-col gap-y-3">
+                        {series.book_series?.map((book, index) =>
+                            <div className="flex flex-col gap-y-3" key={index}>
                                 <div className="text-sm trackwing-wide text-tabs-foreground ">BOOK {book.position}</div>
                                 <SeriesBookCard book={book}/>
                                 <Separator/>
