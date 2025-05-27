@@ -1,27 +1,27 @@
-import type {SeriesBook} from "@/components/types/BookModel.ts";
+import type {BookDocument} from "@/components/types/BookModel.ts";
 import {Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious} from "@/components/ui/carousel.tsx";
 import {Link} from "react-router";
 import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "@/components/ui/tooltip.tsx";
 
-interface BooksCarouselProps {
-    books: SeriesBook[],
+interface RecommendationCarousel {
+    books: BookDocument[],
     side: "top" | "right" | "bottom" | "left" | undefined
 }
 
-const BooksCarousel: React.FC<BooksCarouselProps> = ({ books, side }) => {
+const RecommendationCarousel: React.FC<RecommendationCarousel> = ({ books, side }) => {
     return (
         <Carousel className="w-full my-2" slideNumScroll={5}>
             <CarouselContent className="-ml-1">
                 {books.map((book, index) => (
                     <CarouselItem key={index} className="pl-1 md:basis-1/4 lg:basis-1/5">
-                        <Link to={`/book/${book.book_id}`}>
+                        <Link to={`/book/${book.id}`}>
                             <TooltipProvider>
                                 <Tooltip>
                                     <TooltipTrigger asChild>
                                         <div className="p-1">
-                                            {book.image_url ? <img
+                                            {book.image?.url ? <img
                                                 className="w-full h-auto object-contain rounded-sm border-2 border-transparent hover:border-accent"
-                                                src={book.image_url}
+                                                src={book.image.url}
                                                 alt={book.title}
                                             /> : <div className="w-full aspect-[2/3] bg-gray-200 rounded-sm"/>}
                                         </div>
@@ -45,4 +45,4 @@ const BooksCarousel: React.FC<BooksCarouselProps> = ({ books, side }) => {
     )
 }
 
-export default BooksCarousel;
+export default RecommendationCarousel;

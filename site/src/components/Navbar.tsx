@@ -12,7 +12,6 @@ import {useAuthContext} from "@/contexts/AuthContext.tsx";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {Button} from "@/components/ui/button.tsx";
 import * as React from "react"
-import {cn} from "@/lib/utils.ts";
 import {CalendarCheck, TrendingUp} from "lucide-react";
 
 const Navbar: React.FC<{}> = () => {

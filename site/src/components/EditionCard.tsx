@@ -29,17 +29,23 @@ const EditionCard: React.FC<EditionCardProps> = ({ edition }) => {
         <Card className="w-full overflow-hidden p-0 min-h-[12rem] rounded-sm bg-card border-card-border">
             <div className="flex gap-6 items-stretch">
                 {edition.image_url ? (
-                    <img
-                        src={edition.image_url}
-                        alt={edition.title}
-                        className="object-cover w-36 h-auto"
-                    />
+                    <div className="w-36 aspect-[2/3] bg-card shrink-0 rounded-sm">
+                        <Link to={`/book/${edition.id}`} className="block w-full h-auto">
+                            <img
+                                src={edition.image_url}
+                                alt={edition.title}
+                                className="w-full h-full object-cover rounded-sm"
+                            />
+                        </Link>
+                    </div>
                 ) : (
-                    <div className="w-36 aspect-[2/3] bg-gray-200"/>
+                    <Link to={`/book/${edition.id}`} className="w-36 aspect-[2/3] rounded-sm flex-shrink-0 flex-grow-0">
+                        <div className="w-36 aspect-[2/3] bg-slate-200 object-cover rounded-sm" />
+                    </Link>
                 )}
                 <div className="flex flex-col justify-center pr-6 py-4 space-y-1">
                     <Link
-                        to={`/books/${edition.book_id}`}
+                        to={`/book/${edition.id}`}
                         className="text-xl font-semibold hover:text-muted-foreground tracking-wide text-slate-200 pb-3"
                     >{edition.title}</Link>
                     <div className="text-muted-foreground text-sm font-light">
@@ -52,7 +58,7 @@ const EditionCard: React.FC<EditionCardProps> = ({ edition }) => {
                         {authors.map((author, index) => (
                             <span key={author} className="inline-flex items-center pr-1">
                                 <Link
-                                    to={`/search?author=${encodeURIComponent(author)}`}
+                                    to={`/author/${edition.contributors?.[index].id}`}
                                     className="text-muted-foreground text-sm font-light hover:text-card-muted-foreground"
                                 >{author}</Link>
                                 <div className="text-muted-foreground">{index < authors.length - 1 && ', '}</div>

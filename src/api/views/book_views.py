@@ -9,6 +9,8 @@ from dateutil.relativedelta import relativedelta
 from api.queries import *
 from core.settings import API_KEY
 
+SEARCH_QUERY_TYPES = ["author", "book", "character", "list", "prompt", "publisher", "series", "user"]
+
 def graphql_request(query: str, variables: dict) -> requests.Response:
     url = "https://api.hardcover.app/v1/graphql"
     headers = {
@@ -17,8 +19,11 @@ def graphql_request(query: str, variables: dict) -> requests.Response:
     }
     return requests.post(url, headers=headers, json={"query": query, "variables": variables})
 
-def fetch_book_search(query, page: int)  -> requests.Response:
-    variables = {"query": query, "page": page, "sort": "users_count:desc"}
+def fetch_search(query, page: int, query_type)  -> requests.Response:
+    sort = ""
+    if query_type == "book":
+        sort = "users_count:desc"
+    variables = {"query": query, "page": page, "sort": sort, "query_type": query_type}
     return graphql_request(GET_SEARCH_BOOK, variables)
 
 def fetch_book_basic(book_id: int) -> requests.Response:
@@ -48,6 +53,10 @@ def fetch_trending_books(from_str, to_str, offset: int) -> requests.Response:
 def fetch_upcoming_books(from_str, to_str, offset: int) -> requests.Response:
     variables = {"from": from_str, "to": to_str, "offset": offset}
     return graphql_request(GET_UPCOMING_BOOKS, variables)
+
+def fetch_book_series(series_id: int) -> requests.Response:
+    variables = {"seriesId": series_id}
+    return graphql_request(GET_SERIES_BY_ID, variables)
 
 # class BookTermSearchView(APIView):
 #     def get(self, request):
@@ -81,6 +90,7 @@ def fetch_upcoming_books(from_str, to_str, offset: int) -> requests.Response:
 class BookHardcoverSearchView(APIView):
     def get(self, request):
         query = request.query_params.get("q")
+        query_type = request.query_params.get("type", "book").lower()
         page = request.query_params.get("page", 1)
         if not query or not query.strip():
             return Response({"error": "Missing query"}, status=400)
@@ -90,7 +100,11 @@ class BookHardcoverSearchView(APIView):
         except ValueError:
             return Response({"error": "startIndex must be an integer"}, status=400)
 
-        response = fetch_book_search(query, page)
+        if query_type not in SEARCH_QUERY_TYPES:
+            query_type = "book"
+
+        print(query_type)
+        response = fetch_search(query, page, query_type)
 
         if response.status_code == 200:
             responseData = response.json()
@@ -111,68 +125,59 @@ class BookDetailView(APIView):
         if response.status_code != 200:
             return Response({"error": "GraphQL request failed", "details": response.text}, status=response.status_code)
 
-        data = response.json().get("data", {})
-        book = data.get("books_by_pk") or {}
+        data = safe_get(response.json(), "data", default={})
+        book = safe_get(data, "books_by_pk", default={})
 
-        # Fallback to fetching by edition_id if book is not found
         if not book:
             response = fetch_book_details_edition_id(book_id)
             if response.status_code != 200:
                 return Response({"error": "GraphQL request failed", "details": response.text}, status=response.status_code)
-            books = response.json().get("data", {}).get("books", [])
+            books = safe_get(response.json(), "data", "books", default=[])
             book = books[0] if books else {}
 
         flatten_image(book)
         flatten_tags(book)
         flatten_contributions(book)
 
-        # Flatten series
         series_books = []
-        featured_series = book.get("featured_book_series", {}).get("series")
+        featured_series = safe_get(book, "featured_book_series", "series", default={})
         if featured_series:
-            nodes = (
-                featured_series.get("book_series_aggregate", {})
-                .get("nodes", [])
-            )
+            nodes = safe_get(featured_series, "book_series_aggregate", "nodes", default=[])
             for node in nodes:
-                series_book = node.get("book", {})
+                series_book = safe_get(node, "book", default={})
                 series_books.append({
                     "book_id": node.get("book_id"),
                     "position": node.get("position"),
                     "title": series_book.get("title"),
                     "rating": series_book.get("rating"),
-                    "image_url": series_book.get("image", {}).get("url") if series_book.get("image") else None
+                    "image_url": safe_get(series_book, "image", "url")
                 })
 
             featured_series["series_books"] = series_books
             featured_series.pop("book_series_aggregate", None)
 
-        # Flatten editions
         edition_books = []
         for node in book.get("editions", []):
             edition_books.append({
                 "id": node.get("id"),
-                "image_url": node.get("image", {}).get("url") if node.get("image") else None
+                "image_url": safe_get(node, "image", "url")
             })
         book["editions"] = edition_books
-        book.pop("editions", None)  # Replace with flattened list
+        book.pop("editions", None)
 
-        # Fetch and flatten this edition
         edition_id = book.get("default_cover_edition_id")
         this_edition_response = fetch_this_edition(edition_id) if edition_id else None
 
         this_edition = {}
         if this_edition_response and this_edition_response.status_code == 200:
             this_edition_data = this_edition_response.json()
-            this_edition = this_edition_data.get("data", {}).get("editions_by_pk", {}) or {}
+            this_edition = safe_get(this_edition_data, "data", "editions_by_pk", default={})
 
-            publisher = this_edition.get("publisher", {})
-            this_edition["publisher_name"] = publisher.get("name")
-            this_edition["publisher_id"] = publisher.get("id")
+            this_edition["publisher_name"] = safe_get(this_edition, "publisher", "name")
+            this_edition["publisher_id"] = safe_get(this_edition, "publisher", "id")
             this_edition.pop("publisher", None)
 
-            language_node = this_edition.get("language", {})
-            this_edition["language"] = language_node.get("language")
+            this_edition["language"] = safe_get(this_edition, "language", "language")
             this_edition.pop("language", None)
 
         book["this_edition"] = this_edition
@@ -185,7 +190,7 @@ class BookEditionsView(APIView):
         try:
             page = int(page)
         except ValueError:
-            return Response({"error": "startIndex must be an integer"}, status=400)
+            return Response({"error": "page must be an integer"}, status=400)
 
         offset = max(page - 1, 0) * 10
         response = fetch_book_editions(book_id, offset)
@@ -219,7 +224,7 @@ class TrendingView(APIView):
         try:
             page = int(page)
         except ValueError:
-            return Response({"error": "startIndex must be an integer"}, status=400)
+            return Response({"error": "page must be an integer"}, status=400)
 
         offset = max(page - 1, 0) * 10
 
@@ -307,6 +312,36 @@ class UpcomingView(APIView):
 
         return Response(books)
 
+class BookSeriesView(APIView):
+    def get(self, request, series_id):
+        response = fetch_book_series(series_id)
+
+        if response.status_code != 200:
+            return Response(
+                {"error": "GraphQL request failed", "details": response.text},
+                status=response.status_code
+            )
+
+        responseData = response.json()
+        data = safe_get(responseData, "data", default={})
+        series = safe_get(data, "series_by_pk", default={})
+        books = safe_get(series, "book_series", default=[])
+        for book in books:
+            book_data = book.get("book", {})
+            book["image_url"] = safe_get(book_data, "image", "url")
+            book["pages"] = book_data.get("pages")
+            book["ratings_count"] = book_data.get("ratings_count", 0)
+            book["rating"] = book_data.get("rating")
+            book["users_count"] = book_data.get("users_count", 0)
+            book["title"] = book_data.get("title")
+            book["release_date"] = book_data.get("release_date")
+            book["release_year"] = book_data.get("release_year")
+            book["reviews_count"] = book_data.get("reviews_count", 0)
+            flatten_contributions(book_data)
+            book["authors"] = book_data.get("authors")
+            book.pop("book", None)
+
+        return Response(series)
 
 def flatten_book_response(book_data):
     if not book_data:
@@ -325,42 +360,37 @@ def flatten_book_response(book_data):
 
 # Flatten functions
 def flatten_featured_series(book_data):
-    featured_series = book_data.get("featured_book_series", {})
+    featured_series = safe_get(book_data, "featured_book_series", default={})
     if not featured_series:
         return
-    series = featured_series.get("series", {})
-    series_books_count = series.get("books_count", None)
-    series_primary_books_count = series.get("primary_books_count", None)
-    series_name = series.get("name", None)
-
-    book_data["featured_book_series"]["series_books_count"] = series_books_count
-    book_data["featured_book_series"]["series_primary_books_count"] = series_primary_books_count
-    book_data["featured_book_series"]["name"] = series_name
-    book_data["featured_book_series"].pop("series", None)
+    series = safe_get(featured_series, "series", default={})
+    featured_series["series_books_count"] = series.get("books_count")
+    featured_series["series_primary_books_count"] = series.get("primary_books_count")
+    featured_series["name"] = series.get("name")
+    featured_series.pop("series", None)
 
 def flatten_image(book_data):
-    book_data["image_url"] = book_data.get("image", {}).get("url")
+    book_data["image_url"] = safe_get(book_data, "image", "url")
     book_data.pop("image", None)
 
 def flatten_tags(book_data):
+    taggings = []
     if book_data.get("taggings_aggregate"):
-        taggings = book_data.get("taggings_aggregate", {}).get("nodes", [])
+        taggings = safe_get(book_data, "taggings_aggregate", "nodes", default=[])
         book_data.pop("taggings_aggregate", None)
     else:
-        taggings = book_data.get("taggings", [])
-        book_data.pop("taggings", None)
-
-    book_data["tags"] = [node.get("tag", {}).get("tag") for node in taggings if node.get("tag")]
+        taggings = book_data.pop("taggings", [])
+    book_data["tags"] = [safe_get(node, "tag", "tag") for node in taggings if safe_get(node, "tag")]
 
 def flatten_contributions(book_data):
     contributions = book_data.get("contributions", [])
     authors = [
         {
-            "id": c["author"]["id"],
-            "name": c["author"]["name"],
+            "id": safe_get(c, "author", "id"),
+            "name": safe_get(c, "author", "name"),
             "contribution": c.get("contribution")
         }
-        for c in contributions if c.get("author")
+        for c in contributions if safe_get(c, "author")
     ]
     book_data["authors"] = authors
     book_data.pop("contributions", None)
@@ -377,20 +407,27 @@ def flatten_editions(editions_list):
             for c in edition.get("contributions", [])
         ]
         flattened.append({
-            "book_id": edition["book_id"],
-            "image_id": edition.get("image", {}).get("id"),
-            "image_url": edition.get("image", {}).get("url"),
+            "book_id": edition.get("book_id"),
+            "image_id": safe_get(edition, "image", "id"),
+            "image_url": safe_get(edition, "image", "url"),
             "release_date": edition.get("release_date"),
             "title": edition.get("title"),
-            "publisher_name": edition.get("publisher", {}).get("name"),
-            "publisher_id": edition.get("publisher", {}).get("id"),
-            "edition_information": edition.get("edition_information"),
+            "publisher_name": safe_get(edition, "publisher", "name"),
+            "publisher_id": safe_get(edition, "publisher", "id"),
+            "edition_information": edition.get("edition_information", ""),
             "pages": edition.get("pages", 0),
             "id": edition.get("id"),
-            "language": edition.get("language", {}).get("language"),
+            "language": safe_get(edition, "language", "language"),
             "contributors": contributors,
             "edition_format": edition.get("edition_format"),
-            "editions_count": edition.get("book", {}).get("editions_count")
+            "editions_count": safe_get(edition, "book", "editions_count", default=1)
         })
     return flattened
 
+def safe_get(d: dict, *keys, default=None):
+    for key in keys:
+        if isinstance(d, dict) and key in d:
+            d = d[key]
+        else:
+            return default
+    return d

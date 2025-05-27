@@ -13,10 +13,10 @@ const EditionsCarousel: React.FC<EditionsCarouselProps> = ({ editions, title }) 
             <CarouselContent className="-ml-1">
                 {editions.map((edition, index) => (
                     <CarouselItem key={index} className="pl-1 md:basis-1/4 lg:basis-1/5">
-                        <Link to={`/books/${edition.id}`}>
+                        <Link to={`/book/${edition.id}`}>
                             <div className="p-1 rounded-sm">
                                 {edition.image_url ? <img
-                                    className="w-full h-auto max-h-55 object-contain rounded-sm"
+                                    className="w-full h-auto max-h-55 object-contain rounded-sm border-2 border-transparent hover:border-accent"
                                     src={edition.image_url}
                                     alt={title}
                                 /> : <div className="w-full aspect-[2/3] bg-gray-200 rounded-sm"/>}
@@ -25,8 +25,8 @@ const EditionsCarousel: React.FC<EditionsCarouselProps> = ({ editions, title }) 
                     </CarouselItem>
                 ))}
             </CarouselContent>
-            <CarouselPrevious className="cursor-pointer"/>
-            <CarouselNext className="cursor-pointer"/>
+            <CarouselPrevious className="cursor-pointer hover:text-primary"/>
+            <CarouselNext className="cursor-pointer hover:text-primary"/>
         </Carousel>
     )
 }
