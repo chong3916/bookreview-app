@@ -27,3 +27,11 @@ query GetMoods ($offset: Int!){
     }
 }
 """
+
+GET_BOOKS_BY_TAG = """
+query GetBooksByTags ($offset: Int!, $tagId: Int!){
+    books(where: {taggings: {tag_id: {_eq: $tagId}}}, limit: 5, offset: $offset, order_by: {users_count: desc}) {
+        title
+    }
+}
+"""
