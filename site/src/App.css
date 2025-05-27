@@ -46,6 +46,8 @@
   --color-star-color: var(--star-color);
   --color-navbar-background: var(--navbar-background);
   --color-navbar-accent: var(--navbar-accent);
+  --color-tabs-foreground: var(--tabs-foreground);
+  --color-tabs-muted-foreground: var(--tabs-muted-foreground);
 }
 
 :root {
@@ -88,6 +90,8 @@
   --star-color: oklch(0.84 0.16 84);
   --navbar-background: oklch(0.21 0.04 266);
   --navbar-accent: oklch(0.26 0.04 262);
+  --tabs-foreground: oklch(0.87 0.02 253);
+  --tabs-muted-foreground: oklch(0.55 0.04 257);
 }
 
 .dark {
@@ -101,12 +105,12 @@
   --popover-foreground: oklch(0.984 0.003 247.858);
   --primary: oklch(0.59 0.20 277);
   --primary-foreground: oklch(0.984 0.003 247.858);
-  --secondary: oklch(0.279 0.041 260.031);
-  --secondary-foreground: oklch(0.87 0.02 253);
+  --secondary: oklch(0.37 0.04 257);
+  --secondary-foreground: oklch(0.71 0.04 257);
   --muted: oklch(0.279 0.041 260.031);
   --muted-foreground: oklch(0.71 0.04 257);
   --accent: oklch(0.80 0.16 86);
-  --accent-foreground: oklch(0.984 0.003 247.858);
+  --accent-foreground: oklch(0.29 0.06 54);
   --destructive: oklch(0.704 0.191 22.216);
   --border: oklch(0.45 0.04 257);
   --input: oklch(1 0 0 / 15%);
@@ -129,6 +133,8 @@
   --star-color: oklch(0.84 0.16 84);
   --navbar-background: oklch(0.21 0.04 266);
   --navbar-accent: oklch(0.19 0.04 266);
+  --tabs-foreground: oklch(0.87 0.02 253);
+  --tabs-muted-foreground: oklch(0.55 0.04 257);
 }
 
 @layer base {

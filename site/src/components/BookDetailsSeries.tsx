@@ -5,7 +5,7 @@ import BooksCarousel from "@/components/BooksCarousel.tsx";
 
 interface BookDetailsSeriesProps {
     series: Series,
-    position?: number
+    position?: number | null
 }
 
 const BookDetailsSeries: React.FC<BookDetailsSeriesProps> = ({ series, position }) => {
@@ -14,19 +14,19 @@ const BookDetailsSeries: React.FC<BookDetailsSeriesProps> = ({ series, position 
 
         <div className="flex flex-row items-center gap-2 mb-2">
             <div className="text-slate-500">Featured Series</div>
-            <Badge variant="default" className="text-xs h-5 bg-yellow-300 text-yellow-950 !border-none">
+            <Badge variant="default" className="text-xs h-5 bg-accent text-accent-foreground !border-none">
                 {series.primary_books_count} primary books
             </Badge>
-            <Badge variant="default" className="text-xs h-5 bg-slate-700 text-slate-400 !border-none">
+            <Badge variant="default" className="text-xs h-5 bg-secondary text-secondary-foreground !border-none">
                 {series.books_count} released books
             </Badge>
         </div>
 
-        {position ? <div className="text-lg italic font-light tracking-wide text-slate-300">
-            <Link to={`/series/${series.id}`}>{series.name} #{position}</Link>
+        {position ? <div className="text-lg italic font-light tracking-wide text-tabs-foreground/">
+            <Link to={`/series/${series.id}`} className="hover:text-tabs-foreground/60">{series.name} #{position}</Link>
         </div> : null}
 
-        <BooksCarousel books={series.series_books} side={"top"}/>
+        {series.book_series ? <BooksCarousel books={series.book_series} side={"top"}/> : null}
     </div>)
 }
 

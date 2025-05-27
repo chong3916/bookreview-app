@@ -11,7 +11,7 @@
 export interface Author {
     id: number,
     name: string,
-    contribution?: string
+    contribution?: string | null
 }
 
 export interface Contribution {
@@ -23,56 +23,59 @@ export interface SeriesBook {
     book_id: number,
     position: number,
     title: string,
-    rating: number,
-    image_url: string,
+    image_url: string | null,
+    authors?: Author[]
+    rating?: number | null,
+    reviews_count?: number,
+    release_year?: number,
+    release_date?: string | null,
+    ratings_count?: number,
+    users_count?: number,
+    page?: number | null,
 }
 
 export interface Series {
     books_count: number,
-    id: number,
+    id?: number,
     name: string,
     primary_books_count: number,
-    series_books: SeriesBook[]
+    book_series?: SeriesBook[]
 }
 
 export interface FeaturedSeries {
     id?: number,
-    series: Series,
+    series?: Series,
     unreleased?: boolean,
-    position?: number
+    position?: number | null
 }
 
 export interface Image {
-    height: number,
+    height?: number | null,
     id?: number,
-    url: string,
-    width: number,
-    color?: string,
-    ratio?: number
+    url?: string | null,
+    width?: number | null,
+    color?: string | null,
+    ratio?: number | null
 }
 
 export interface BookDocument {
     id: string,
-    activities_count: number,
-    contributions: Contribution[],
-    description: string,
-    featured_series: FeaturedSeries | null,
-    genres: string[],
-    image: Image,
-    moods: string[],
-    pages: number,
-    rating: number,
-    ratings_count: number,
-    release_date: string,
-    release_year: number,
-    reviews_count: number,
+    activities_count?: number,
+    contributions?: Contribution[],
+    description?: string | null,
+    featured_series?: FeaturedSeries | null,
+    genres?: string[],
+    image: Image | null,
+    moods?: string[],
+    pages?: number,
+    rating?: number,
+    ratings_count?: number,
+    release_date?: string,
+    release_year?: number,
+    reviews_count?: number,
     series_names: string[],
-    tags: string[],
-    title: string,
-}
-
-export default interface BookHit {
-    document: BookDocument
+    tags?: string[],
+    title?: string,
 }
 
 // export default interface BookModel {

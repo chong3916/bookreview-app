@@ -40,7 +40,7 @@ const UpcomingCard: React.FC<{ book: UpcomingModel }> = ({ book }  ) => {
 
                 <div className="flex flex-col justify-center pr-6 py-4 space-y-3">
                     <Link
-                        to={`/books/${book.id}`}
+                        to={`/book/${book.id}`}
                         className="text-xl font-semibold hover:text-muted-foreground tracking-wide"
                     >{book.title}</Link>
 
