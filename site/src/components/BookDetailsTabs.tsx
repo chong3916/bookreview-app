@@ -108,7 +108,7 @@ const BookDetailsTabs: React.FC<SearchDetailsTabsProps> = ({ bookDetails }) => {
                         </div>
                         <div className="tracking-wide mt-3 text-tabs-foreground">Other Editions</div>
                         <EditionsCarousel editions={bookDetails.editions} title={bookDetails.title}/>
-                        <Link to={`/editions/${bookDetails.id}`} className="flex items-center text-slate-400 ml-1">View all {bookDetails.editions_count} editions <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5 ml-1 mt-0.5">
+                        <Link to={`/editions/${bookDetails.id}`} className="flex items-center text-secondary-foreground hover:text-secondary-foreground/70 ml-1">View all {bookDetails.editions_count} editions <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5 ml-1 mt-0.5">
                             <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
                         </svg></Link>
                     </div>
