@@ -14,7 +14,7 @@ client = genai.Client(api_key=GEMINI_API_KEY)
 
 
 def fetch_recommendation(title, author, isbn):
-    query = title + author + isbn
+    query = title + " " + author + " " + isbn
     variables = {"query": query}
     return graphql_request(GET_RECOMMENDATION_BOOK, variables)
 

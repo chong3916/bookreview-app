@@ -26,7 +26,7 @@ const BookDetailsSeries: React.FC<BookDetailsSeriesProps> = ({ series, position 
             <Link to={`/series/${series.id}`} className="hover:text-tabs-foreground/60">{series.name} #{position}</Link>
         </div> : null}
 
-        {series.series_books ? <BooksCarousel books={series.series_books} side={"top"}/> : null}
+        {series.book_series ? <BooksCarousel books={series.book_series} side={"top"}/> : null}
     </div>)
 }
 
