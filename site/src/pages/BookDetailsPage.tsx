@@ -1,4 +1,4 @@
-import {useParams} from "react-router";
+import {Link, useParams} from "react-router";
 import {useEffect, useState} from "react";
 import type BookDetailModel from "@/components/types/BookDetailModel.ts";
 import {bookService} from "@/api/book.ts";
@@ -58,10 +58,10 @@ const BookDetailsPage: React.FC<{}> = () => {
 
                             <div className="flex flex-row mb-2"> {/* Authors */}
                                 {authors?.map((author, i) => (
-                                    <div className="text-base md:text-lg font-light pr-2" key={i}>
+                                    <Link to={`/author/${bookDetails.contributions[i].author.id}`} className="text-base md:text-lg font-light pr-2 hover:text-foreground/60" key={i}>
                                         {author}
                                         {i < authors.length - 1 && ','}
-                                    </div>
+                                    </Link>
                                 ))}
                             </div>
 
