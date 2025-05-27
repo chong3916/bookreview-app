@@ -16,7 +16,7 @@ const EditionsCarousel: React.FC<EditionsCarouselProps> = ({ editions, title }) 
                         <Link to={`/book/${edition.id}`}>
                             <div className="p-1 rounded-sm">
                                 {edition.image_url ? <img
-                                    className="w-full h-auto max-h-55 object-contain rounded-sm hover:border-accent hover:border-2"
+                                    className="w-full h-auto max-h-55 object-contain rounded-sm border-2 border-transparent hover:border-accent"
                                     src={edition.image_url}
                                     alt={title}
                                 /> : <div className="w-full aspect-[2/3] bg-gray-200 rounded-sm"/>}

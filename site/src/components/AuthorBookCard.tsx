@@ -15,13 +15,19 @@ const AuthorBookCard: React.FC<{book: AuthorBookModel}> = ({ book }) => {
         <div className="w-full overflow-hidden p-0 min-h-[6rem] bg-card border-card-border ">
             <div className="flex gap-6 items-stretch">
                 {book.image_url ? (
-                    <img
-                        src={book.image_url}
-                        alt={book.title}
-                        className="object-cover w-20 h-auto"
-                    />
+                    <div className="w-20 aspect-[2/3] bg-card shrink-0">
+                        <Link to={`/book/${book.id}`} className="block w-full h-auto">
+                            <img
+                                src={book.image_url}
+                                alt={book.title}
+                                className="w-full h-full object-cover border-2 border-transparent hover:border-accent"
+                            />
+                        </Link>
+                    </div>
                 ) : (
-                    <div className="w-20 aspect-[2/3] bg-gray-200"/>
+                    <Link to={`/book/${book.id}`} className="w-20 aspect-[2/3] flex-shrink-0 flex-grow-0">
+                        <div className="w-20 aspect-[2/3] bg-slate-200 object-cover " />
+                    </Link>
                 )}
 
                 <div className="flex flex-col justify-center pr-6 py-4 space-y-3">
