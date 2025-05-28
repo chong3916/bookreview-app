@@ -2,6 +2,9 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.generics import RetrieveAPIView
+
+from api.serializers.book_list_serializer import BookListSerializer
+from book_list.models import BookList
 from users.models import CustomUser
 from api.serializers.user_serializer import UserSerializer, CurrentUserSerializer
 from rest_framework.generics import CreateAPIView
@@ -23,8 +26,15 @@ class CurrentUserView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        serializer = CurrentUserSerializer(request.user)
-        return Response(serializer.data)
+        user = CustomUser.objects.prefetch_related("lists").get(pk=request.user.pk)
+        user_serializer = CurrentUserSerializer(user)
+        book_lists = BookList.objects.filter(user=request.user)
+        book_lists_serializer = BookListSerializer(book_lists, many=True, context={'include_preview_books': False})
+
+        user_data = user_serializer.data
+        user_data["book_lists"] = book_lists_serializer.data
+        return Response(user_data)
+
 
 class CreateUserView(CreateAPIView):
     queryset = CustomUser.objects.all()
@@ -110,3 +120,11 @@ class RefreshTokenView(APIView):
             return Response({'access': access_token}, status=status.HTTP_200_OK)
         except TokenError as e:
             return Response({'detail': 'Invalid refresh token'}, status=status.HTTP_400_BAD_REQUEST)
+
+class CurrentUserBookListsView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        book_lists = BookList.objects.filter(user=request.user)
+        serializer = BookListSerializer(book_lists, many=True, context={'include_preview_books': True})
+        return Response(serializer.data)

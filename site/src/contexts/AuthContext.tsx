@@ -1,17 +1,28 @@
 import React, {useEffect} from "react";
 import {auth} from "@/api/auth.ts";
 
+type BookList = {
+    id: number,
+    name: string,
+    description: string | null,
+    book_ids: number[],
+    isPublic: boolean
+}
+
 export type AuthContextType = {
     firstName: string,
     lastName: string,
     email: string,
-    accessToken: string | null
+    accessToken: string | null,
+    avatar: string | null,
+    book_lists: BookList[],
 }
 
 export const AuthContext = React.createContext<{
     authData: AuthContextType;
     setAuthData: React.Dispatch<React.SetStateAction<AuthContextType>>;
     logout: () => void;
+    refreshBookLists: () => Promise<void>;
 } | null>(null);
 
 const { Provider } = AuthContext;
@@ -21,18 +32,27 @@ export const AuthContextProvider = ({ children }: any) => {
         firstName: '',
         lastName: '',
         email: '',
-        accessToken: null
+        accessToken: null,
+        avatar: null,
+        book_lists: [],
     });
 
     const logout = async () => {
         await auth.logout();
-        setAuthData({...authData, email: '', accessToken: null, firstName: '', lastName: ''})
+        setAuthData({...authData, email: '', accessToken: null, firstName: '', lastName: '', avatar: null, book_lists: []})
+    }
+
+    const refreshBookLists = async () => {
+        if (!authData.accessToken) return;
+        const user = await auth.getCurrentUser(authData.accessToken);
+        setAuthData(prev => ({ ...prev, book_lists: user.book_lists }));
     }
 
     const contextValue = {
         authData,
         setAuthData,
-        logout
+        logout,
+        refreshBookLists
     }
 
     const hasRefreshed = React.useRef(false);
@@ -49,7 +69,7 @@ export const AuthContextProvider = ({ children }: any) => {
             const refreshed = await auth.refreshToken();
             const accessToken = refreshed.access;
             const user = await auth.getCurrentUser(accessToken);
-            setAuthData({...authData, email: user.email, accessToken: accessToken, firstName: user.first_name, lastName: user.last_name})
+            setAuthData({...authData, email: user.email, accessToken: accessToken, firstName: user.first_name, lastName: user.last_name, avatar: user.avatar, book_lists: user.book_lists})
         } catch (e) {
             console.log("No valid refresh token");
         }

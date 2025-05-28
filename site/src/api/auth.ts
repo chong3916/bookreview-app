@@ -60,7 +60,7 @@ const refreshToken = async () => {
 }
 
 const getCurrentUser = async (accessToken: string) => {
-    const response = await fetch('/api/users/me', {
+    const response = await fetch('/api/users/profile/', {
         method: 'GET',
         headers: {
             'Authorization': `Bearer ${accessToken}`, // ⬅️ important
