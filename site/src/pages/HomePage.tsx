@@ -1,5 +1,6 @@
 import React from "react";
 import {useAuthContext} from "@/contexts/AuthContext.tsx";
+import CreateBookListForm from "@/components/CreateBookListForm.tsx";
 
 const HomePage: React.FC<{}> = () => {
     const { authData } = useAuthContext();
@@ -7,7 +8,7 @@ const HomePage: React.FC<{}> = () => {
     return (
         <div className="min-h-screen flex items-center justify-center">
             <div className="flex flex-col space-y-4 text-center">
-                <div>{authData.firstName}</div>
+                <CreateBookListForm/>
             </div>
         </div>
     );

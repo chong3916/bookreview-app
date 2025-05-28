@@ -1,6 +1,6 @@
 from django.contrib.auth.models import AbstractUser, BaseUserManager, PermissionsMixin
 from django.db import models
-
+import uuid
 
 class CustomUserManager(BaseUserManager):
     def create_user(self, email, first_name, last_name=None, password=None, **extra_fields):
@@ -23,6 +23,7 @@ class CustomUserManager(BaseUserManager):
 
 class CustomUser(AbstractUser, PermissionsMixin):
     # Add custom fields here as needed
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     username = None
     email = models.EmailField(unique=True)
     first_name = models.CharField(max_length=30, unique=False)
