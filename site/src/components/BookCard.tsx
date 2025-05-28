@@ -50,7 +50,7 @@ const BookCard: React.FC<{ book: BookDocument }> = ({ book }) => {
                 )}
                 <div className="flex flex-col justify-center pr-6 py-4 space-y-3">
                     <div className="grid grid-cols-10 items-center">
-                        <div className="col-span-8 flex flex-col justify-center pr-6 py-4 space-y-3">
+                        <div className="col-span-8 flex flex-col justify-center pr-6 py-4 space-y-3 w-9/10">
                             <Link
                                 to={`/book/${book.id}`}
                                 className="text-xl font-semibold hover:text-muted-foreground tracking-wide"
@@ -75,7 +75,7 @@ const BookCard: React.FC<{ book: BookDocument }> = ({ book }) => {
                                 {formattedDate ? (<div> - {publishStr} {formattedDate}</div>) : (book.release_year ? <div> - published {book.release_year}</div> : null)}
                             </div>
                         </div>
-                        <div className="justify-self-center"><AddBookButton bookId={book.id}/></div>
+                        <div className="justify-self-center"><AddBookButton bookId={Number(book.id)}/></div>
                     </div>
                     <div className="flex flex-wrap gap-1">
                         {book.genres?.slice(0, 5).map((genre) => (
