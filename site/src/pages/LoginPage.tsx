@@ -36,9 +36,8 @@ const LoginPage: React.FC<{}> = () => {
             setAuthData({...authData, email: user.email, accessToken: accessToken, firstName: user.first_name, lastName: user.last_name, avatar: user.avatar, book_lists: user.book_lists})
             navigate("/");
         } catch (e) {
-
+            console.error("Login failed. Please check your credentials.");
         }
-
     }
 
     return (
