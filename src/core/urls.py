@@ -16,7 +16,21 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
+from api.views.author_views import AuthorDetailView
+from api.views.book_views import BookSeriesView, BookEditionsView
+from api.views.user_views import ActivateUserView, RefreshTokenView
+
 urlpatterns = [
     path('', include('users.urls')),
+    path('api/users/', include('api.urls.user_urls')),
+    path('activate/<uidb64>/<token>/', ActivateUserView.as_view(), name='activate-user'),
+    path('api/token/refresh/', RefreshTokenView.as_view(), name='refresh_token'),
     path('admin/', admin.site.urls),
+    path('api/books/', include('api.urls.book_urls')),
+    path('api/editions/<str:book_id>', BookEditionsView.as_view(), name='book-editions'),
+    path('api/author/<str:author_id>', AuthorDetailView.as_view(), name='author-detail'),
+    path('api/series/<str:series_id>', BookSeriesView.as_view(), name='book-series'),
+    path('api/tagging/', include('api.urls.tag_urls')),
+    path('api/gemini/', include('api.urls.gemini_urls')),
+    path('api/booklist/', include('api.urls.book_list_urls')),
 ]
