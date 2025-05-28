@@ -11,13 +11,14 @@ import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import {useAuthContext} from "@/contexts/AuthContext.tsx";
 import {cn} from "@/lib/utils.ts";
-import {Link} from "react-router";
+import {Link, useNavigate} from "react-router";
 
 const LoginPage: React.FC<{}> = () => {
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
     const { authData, setAuthData } = useAuthContext();
 
+    const navigate = useNavigate();
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -32,7 +33,8 @@ const LoginPage: React.FC<{}> = () => {
 
             const user = await auth.getCurrentUser(accessToken);
 
-            setAuthData({...authData, email: user.email, accessToken: accessToken, firstName: user.first_name, lastName: user.last_name, avatar: user.avatar})
+            setAuthData({...authData, email: user.email, accessToken: accessToken, firstName: user.first_name, lastName: user.last_name, avatar: user.avatar, book_lists: user.book_lists})
+            navigate("/");
         } catch (e) {
 
         }

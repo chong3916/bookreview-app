@@ -1,12 +1,21 @@
 import React, {useEffect} from "react";
 import {auth} from "@/api/auth.ts";
 
+type BookList = {
+    id: number,
+    name: string,
+    description: string | null,
+    book_ids: number[],
+    isPublic: boolean
+}
+
 export type AuthContextType = {
     firstName: string,
     lastName: string,
     email: string,
     accessToken: string | null,
-    avatar: string | null
+    avatar: string | null,
+    book_lists: BookList[],
 }
 
 export const AuthContext = React.createContext<{
@@ -23,12 +32,13 @@ export const AuthContextProvider = ({ children }: any) => {
         lastName: '',
         email: '',
         accessToken: null,
-        avatar: null
+        avatar: null,
+        book_lists: []
     });
 
     const logout = async () => {
         await auth.logout();
-        setAuthData({...authData, email: '', accessToken: null, firstName: '', lastName: '', avatar: null})
+        setAuthData({...authData, email: '', accessToken: null, firstName: '', lastName: '', avatar: null, book_lists: []})
     }
 
     const contextValue = {
@@ -51,7 +61,7 @@ export const AuthContextProvider = ({ children }: any) => {
             const refreshed = await auth.refreshToken();
             const accessToken = refreshed.access;
             const user = await auth.getCurrentUser(accessToken);
-            setAuthData({...authData, email: user.email, accessToken: accessToken, firstName: user.first_name, lastName: user.last_name, avatar: user.avatar})
+            setAuthData({...authData, email: user.email, accessToken: accessToken, firstName: user.first_name, lastName: user.last_name, avatar: user.avatar, book_lists: user.book_lists})
         } catch (e) {
             console.log("No valid refresh token");
         }

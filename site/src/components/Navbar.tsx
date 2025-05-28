@@ -6,7 +6,7 @@ import {
     NavigationMenuList,
     NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu"
-import {Link} from "react-router";
+import {Link, useNavigate} from "react-router";
 import SearchBar from "@/components/SearchBar.tsx";
 import {useAuthContext} from "@/contexts/AuthContext.tsx";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -14,8 +14,23 @@ import {Button} from "@/components/ui/button.tsx";
 import * as React from "react"
 import {CalendarCheck, TrendingUp} from "lucide-react";
 
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+
 const Navbar: React.FC<{}> = () => {
-    const { authData } = useAuthContext();
+    const { authData, logout } = useAuthContext();
+    const navigate = useNavigate();
+
+    const handleLogout = () => {
+        logout()
+        navigate("/");
+    }
 
     return (
         <nav className="fixed top-0 left-0 w-full z-50 px-5 py-4 border-b shadow-sm bg-navbar-background border-navbar-background">
@@ -32,10 +47,11 @@ const Navbar: React.FC<{}> = () => {
                     <NavigationMenu>
                         <NavigationMenuList className="gap-4">
                             <NavigationMenuItem>
+                                <div className="relative inline-block">
                                 <NavigationMenuTrigger className="cursor-pointer bg-navbar-accent hover:bg-foreground/5 data-[state=open]:bg-foreground/10 focus:bg-foreground/10 text-foreground rounded-md px-4 py-2 transition-colors">
                                     Discover
                                 </NavigationMenuTrigger>
-                                <NavigationMenuContent>
+                                <NavigationMenuContent align={authData.accessToken ? "right" : "left"}>
                                     <ul className="grid gap-3 w-48 py-2 px-1">
                                         <li>
                                             <NavigationMenuLink asChild className="flex">
@@ -59,14 +75,29 @@ const Navbar: React.FC<{}> = () => {
                                         </li>
                                     </ul>
                                 </NavigationMenuContent>
+                                </div>
                             </NavigationMenuItem>
 
                             <NavigationMenuItem>
                                 {authData.accessToken ? (
-                                    <Avatar>
-                                        <AvatarImage src="https://github.com/shadcn.png" />
-                                        <AvatarFallback>CN</AvatarFallback>
-                                    </Avatar>
+                                    <DropdownMenu>
+                                        <DropdownMenuTrigger asChild>
+                                            <div className="cursor-pointer pointer-events-auto">
+                                                <Avatar>
+                                                    {authData.avatar ? <AvatarImage src={authData.avatar} /> : <AvatarFallback>CN</AvatarFallback>}
+                                                    <AvatarFallback>CN</AvatarFallback>
+                                                </Avatar>
+                                            </div>
+                                        </DropdownMenuTrigger>
+                                        <DropdownMenuContent>
+                                            <DropdownMenuLabel className="cursor-default">{authData.firstName}</DropdownMenuLabel>
+                                            <DropdownMenuSeparator />
+                                            <DropdownMenuItem className="cursor-pointer" onClick={() => navigate("/profile")}>Profile</DropdownMenuItem>
+                                            <DropdownMenuItem className="cursor-pointer" onClick={() => navigate("/profile/lists")}>My Lists</DropdownMenuItem>
+                                            <DropdownMenuItem className="cursor-pointer" onClick={() => navigate("/profile/followers")}>Followers</DropdownMenuItem>
+                                            <DropdownMenuItem className="cursor-pointer" onClick={() => handleLogout()}>Logout</DropdownMenuItem>
+                                        </DropdownMenuContent>
+                                    </DropdownMenu>
                                 ) : (
                                     <NavigationMenuItem>
                                         <Button asChild>
