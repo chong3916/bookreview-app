@@ -15,6 +15,7 @@ import UpcomingPage from "@/pages/UpcomingPage.tsx";
 import AuthorDetailsPage from "@/pages/AuthorDetailsPage.tsx";
 import SeriesPage from "@/pages/SeriesPage.tsx";
 import BrowseTagsPage from "@/pages/BrowseTagsPage.tsx";
+import ProfilePage from "@/pages/ProfilePage.tsx";
 
 function App() {
     return (
@@ -35,6 +36,8 @@ function App() {
                                 <Route path="/editions/:editionId" element={<EditionsPage />} />
                                 <Route path="/series/:seriesId" element={<SeriesPage />} />
                                 <Route path="/browse/:browseType?" element={<BrowseTagsPage/>} />
+                                <Route path="/profile" element={<ProfilePage/>}/>
+                                {/*<Route path="/profile/lists" element={<ListsPage/>}/>*/}
                                 <Route path="/" element={<HomePage/>}/>
                             </Routes>
                         </div>

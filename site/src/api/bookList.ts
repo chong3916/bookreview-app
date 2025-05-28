@@ -5,6 +5,10 @@ interface createListInput {
     book_ids: number[]
 }
 
+interface addBookInput {
+    book_id: number
+}
+
 const createList = async (accessToken: string | null, name: string, description: string, isPublic: boolean, bookIds: number[]) => {
     if (!accessToken) return
 
@@ -15,7 +19,48 @@ const createList = async (accessToken: string | null, name: string, description:
         book_ids: bookIds ? bookIds : []
     };
 
-    const response = await fetch('/api/booklist/create', {
+    const response = await fetch('/api/booklist/create/', {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${accessToken}`, // ⬅️ important
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+    })
+
+    if (!response.ok) {
+        throw new Error('Failed to create new book list');
+    }
+
+    return await response.json();
+}
+
+const getCurrentUserLists = async (accessToken: string | null)=> {
+    if (!accessToken) return
+
+    const response = await fetch('/api/users/profile/booklists/', {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${accessToken}`, // ⬅️ important
+            'Content-Type': 'application/json'
+        }
+    })
+
+    if (!response.ok) {
+        throw new Error('Failed to get profiles book lists');
+    }
+
+    return await response.json();
+}
+
+const addBookToList = async (accessToken: string | null, listId: number, bookId: number) => {
+    if (!accessToken) return
+
+    const payload: addBookInput = {
+        book_id: bookId
+    };
+
+    const response = await fetch(`/api/booklist/${listId}/add_book/`, {
         method: 'POST',
         headers: {
             'Authorization': `Bearer ${accessToken}`, // ⬅️ important
@@ -32,5 +77,7 @@ const createList = async (accessToken: string | null, name: string, description:
 }
 
 export const bookListService = {
-    createList
+    createList,
+    getCurrentUserLists,
+    addBookToList
 }
