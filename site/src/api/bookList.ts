@@ -5,7 +5,9 @@ interface createListInput {
     book_ids: number[]
 }
 
-const createList = async (accessToken: string, name: string, description: string, isPublic: boolean, bookIds: number[]) => {
+const createList = async (accessToken: string | null, name: string, description: string, isPublic: boolean, bookIds: number[]) => {
+    if (!accessToken) return
+
     const payload: createListInput = {
         name: name,
         description: description,

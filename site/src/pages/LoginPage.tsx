@@ -32,7 +32,7 @@ const LoginPage: React.FC<{}> = () => {
 
             const user = await auth.getCurrentUser(accessToken);
 
-            setAuthData({...authData, email: user.email, accessToken: accessToken, firstName: user.first_name, lastName: user.last_name})
+            setAuthData({...authData, email: user.email, accessToken: accessToken, firstName: user.first_name, lastName: user.last_name, avatar: user.avatar})
         } catch (e) {
 
         }

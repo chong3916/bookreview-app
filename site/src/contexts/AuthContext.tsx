@@ -5,7 +5,8 @@ export type AuthContextType = {
     firstName: string,
     lastName: string,
     email: string,
-    accessToken: string | null
+    accessToken: string | null,
+    avatar: string | null
 }
 
 export const AuthContext = React.createContext<{
@@ -21,12 +22,13 @@ export const AuthContextProvider = ({ children }: any) => {
         firstName: '',
         lastName: '',
         email: '',
-        accessToken: null
+        accessToken: null,
+        avatar: null
     });
 
     const logout = async () => {
         await auth.logout();
-        setAuthData({...authData, email: '', accessToken: null, firstName: '', lastName: ''})
+        setAuthData({...authData, email: '', accessToken: null, firstName: '', lastName: '', avatar: null})
     }
 
     const contextValue = {
@@ -49,7 +51,7 @@ export const AuthContextProvider = ({ children }: any) => {
             const refreshed = await auth.refreshToken();
             const accessToken = refreshed.access;
             const user = await auth.getCurrentUser(accessToken);
-            setAuthData({...authData, email: user.email, accessToken: accessToken, firstName: user.first_name, lastName: user.last_name})
+            setAuthData({...authData, email: user.email, accessToken: accessToken, firstName: user.first_name, lastName: user.last_name, avatar: user.avatar})
         } catch (e) {
             console.log("No valid refresh token");
         }
