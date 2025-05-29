@@ -9,24 +9,26 @@ import CreateNewListButton from "@/components/CreateNewListButton.tsx";
 import {Link} from "react-router";
 import {Badge} from "@/components/ui/badge"
 import {Button} from "@/components/ui/button.tsx";
+import {testBookList} from "@/bookListFixtures.ts";
+import PreviewBookList from "@/components/PreviewBookList.tsx";
 
 const ProfilePage: React.FC<{}> = () => {
     const { authData } = useAuthContext();
     const [bookLists, setBookLists] = useState<BookListModel[]>([])
-    const [updatedProfile, setUpdatedProfile] = useState<boolean>(false)
-    const [udpdatedLists, setUpdatedLists] = useState<boolean>(false)
 
     useEffect(() => {
+        // setBookLists(testBookList)
         if (!authData.accessToken) return
         // TODO: GET MORE USER DETAILS (FOLLOWERS/FRIENDS, REVIEWS, ETC)
         getUserLists()
-    }, [authData.accessToken])
+    }, [authData.accessToken, authData.book_lists])
 
     const getUserLists = async () => {
         try {
             const response = await bookListService.getCurrentUserLists(authData.accessToken);
             setBookLists(response);
             console.log(response)
+            // setBookLists(testBookList)
         } catch (e) {
             console.error("Fetching profile failed", e);
         }
@@ -62,12 +64,13 @@ const ProfilePage: React.FC<{}> = () => {
                     <div className="w-10 justify-self-end"><CreateNewListButton/></div>
                 </div>
                 {bookLists.map((list) =>
-                    <div key={list.id} className="min-h-[12rem]">
+                    <div key={list.id} className="min-h-[12rem] flex flex-col gap-y-4">
                         <div className="flex flex-row gap-x-2 items-center">
                             <Link to={`/list/${list.id}`}>{list.name}</Link>
                             {list.isPublic ? <Badge className="bg-accent font-light text-accent-foreground rounded-lg h-5">Public</Badge>
                                 : <Badge className="font-light rounded-lg h-5">Private</Badge>}
                         </div>
+                        <PreviewBookList previewBookList={list.preview_books} listId={list.id}/>
                     </div>
                 )}
             </div>

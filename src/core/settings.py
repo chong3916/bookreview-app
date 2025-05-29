@@ -101,6 +101,8 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
+load_dotenv(BASE_DIR / '.env')
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
@@ -147,8 +149,6 @@ USE_L10N = True
 USE_TZ = True
 
 APPEND_SLASH = False
-
-load_dotenv(BASE_DIR / '.env')
 
 API_KEY = os.getenv("API_KEY")
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")

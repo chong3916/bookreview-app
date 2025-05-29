@@ -16,7 +16,7 @@ import {useAuthContext} from "@/contexts/AuthContext.tsx";
 import {bookListService} from "@/api/bookList.ts";
 
 const CreateNewListButton: React.FC<{}> = () => {
-    const { authData } = useAuthContext();
+    const { authData, refreshBookLists } = useAuthContext();
     const [name, setName] = useState<string>("");
     const [description, setDescription] = useState<string>("");
     const [isPublic, setIsPublic] = useState<boolean>(false);
@@ -36,6 +36,7 @@ const CreateNewListButton: React.FC<{}> = () => {
         try {
             await bookListService.createList(authData.accessToken, name, description, isPublic, []);
             setOpen(false);
+            await refreshBookLists();
         } catch (e) {
             console.error("Failed to create list: ", e)
             // TODO: ERROR MESSAGE

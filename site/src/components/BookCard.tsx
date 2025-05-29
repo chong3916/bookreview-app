@@ -4,7 +4,7 @@ import {Link} from "react-router";
 import type {BookDocument} from "@/components/types/BookModel.ts";
 import {useEffect} from "react";
 import StarRating from "@/components/StarRating.tsx";
-import AddBookButton from "@/components/AddBookButton.tsx";
+import AddBookButtonCard from "@/components/AddBookButtonCard.tsx";
 
 const BookCard: React.FC<{ book: BookDocument }> = ({ book }) => {
     const authors: string[] = book.contributions?.map((contributor) => {
@@ -75,7 +75,7 @@ const BookCard: React.FC<{ book: BookDocument }> = ({ book }) => {
                                 {formattedDate ? (<div> - {publishStr} {formattedDate}</div>) : (book.release_year ? <div> - published {book.release_year}</div> : null)}
                             </div>
                         </div>
-                        <div className="justify-self-center"><AddBookButton bookId={Number(book.id)}/></div>
+                        <div className="justify-self-center"><AddBookButtonCard bookId={Number(book.id)}/></div>
                     </div>
                     <div className="flex flex-wrap gap-1">
                         {book.genres?.slice(0, 5).map((genre) => (

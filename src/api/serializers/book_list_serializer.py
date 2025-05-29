@@ -24,12 +24,10 @@ class BookListSerializer(serializers.ModelSerializer):
             return None
 
         preview_ids = obj.book_ids[:5]
-        external_ids = [self.get_book_data(book_id) for book_id in preview_ids]
-
         results = []
 
         with ThreadPoolExecutor(max_workers=5) as executor:
-            future_to_id = {executor.submit(self.get_book_data, eid): eid for eid in external_ids}
+            future_to_id = {executor.submit(self.get_book_data, book_id): book_id for book_id in preview_ids}
             for future in as_completed(future_to_id):
                 try:
                     data = future.result()
@@ -58,4 +56,4 @@ class BookListSerializer(serializers.ModelSerializer):
         return rep
 
 class AddBookToListSerializer(serializers.Serializer):
-    book_id = serializers.CharField(max_length=100)
+    book_id = serializers.IntegerField()
