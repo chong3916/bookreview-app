@@ -11,6 +11,7 @@ import BookDetailsTabs from "@/components/BookDetailsTabs.tsx";
 import BookDetailsSeries from "@/components/BookDetailsSeries.tsx";
 import RecommendationCarousel from "@/components/RecommendationCarousel.tsx";
 import {testRecommendations} from "@/recommendationFixtures.ts";
+import AddBookButtonDetails from "@/components/AddBookButtonDetails.tsx";
 
 const BookDetailsPage: React.FC<{}> = () => {
     const {bookId} = useParams();
@@ -72,7 +73,7 @@ const BookDetailsPage: React.FC<{}> = () => {
                                 alt={bookDetails.title}
                                 className="w-full h-auto object-contain rounded"
                             /> : <div className="w-36 aspect-[2/3] bg-gray-200 rounded" />}
-                            <Button className="w-full my-3 bg-primary text-primary-foreground">WANT TO READ</Button>
+                            <div className="w-full my-5"><AddBookButtonDetails bookId={Number(bookId)}/></div>
                         </div>
                         {/* Right side of page */}
                         <div className="flex flex-col pb-3 w-full ml-[30%] mt-16">

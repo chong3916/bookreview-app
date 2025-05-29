@@ -1,6 +1,5 @@
 import React from "react";
 import {useAuthContext} from "@/contexts/AuthContext.tsx";
-import CreateBookListForm from "@/components/CreateBookListForm.tsx";
 import CreateNewListButton from "@/components/CreateNewListButton.tsx";
 
 const HomePage: React.FC<{}> = () => {

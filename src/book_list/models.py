@@ -16,7 +16,7 @@ class BookList(models.Model):
     visible_to = models.ManyToManyField("users.CustomUser", related_name="shared_lists", blank=True)
 
     # Store external book IDs (as strings or integers, depending on your API)
-    book_ids = ArrayField(models.CharField(max_length=255), default=list, blank=True)
+    book_ids = ArrayField(models.IntegerField(), default=list, blank=True)
 
     def __str__(self):
         return f"{self.name} ({self.user.email})"
