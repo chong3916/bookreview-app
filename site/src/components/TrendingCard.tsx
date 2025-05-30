@@ -40,10 +40,9 @@ const TrendingCard: React.FC<{ book: TrendingModel }> = ({ book }  ) => {
 
                     <div>
                         {authors.map((author, index) => (
-                            <span key={author}>
+                            <span key={author} className="text-secondary-foreground hover:text-muted-foreground font-light">
                                 <Link
                                     to={`/search?author=${encodeURIComponent(author)}`}
-                                    className="text-secondary-foreground hover:text-muted-foreground font-light"
                                 >{author}</Link>
                                 {index < authors.length - 1 && ', '}
                             </span>

@@ -36,3 +36,26 @@ class AddBookToListView(APIView):
         book_list.save()
 
         return Response({"detail": "Book added to list."}, status=status.HTTP_200_OK)
+
+class BookListDetailView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, list_id):
+        book_list = get_object_or_404(BookList, id=list_id)
+
+        user = request.user
+        if not (book_list.user == user or book_list.isPublic or user in book_list.visible_to.all()):
+            return Response({'detail': 'Not authorized to view this list.'}, status=status.HTTP_403_FORBIDDEN)
+
+        page = int(request.query_params.get('page', 1))  # only page comes from query param
+        page_size = 20  # fixed page size
+
+        context = {
+            'request': request,
+            'include_book_details': True,
+            'page': page,
+            'page_size': page_size,
+        }
+
+        serializer = BookListSerializer(book_list, context=context)
+        return Response(serializer.data)

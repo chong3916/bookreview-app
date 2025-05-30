@@ -76,8 +76,27 @@ const addBookToList = async (accessToken: string | null, listId: number, bookId:
     return await response.json();
 }
 
+const getBookList = async (accessToken: string | null, listId: string | undefined) => {
+    if (!accessToken || !listId) throw new Error('Failed to get list')
+
+    const response = await fetch(`/api/booklist/${listId}/`, {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${accessToken}`, // ⬅️ important
+            'Content-Type': 'application/json'
+        },
+    })
+
+    if (!response.ok) {
+        throw new Error('Not authorized to view list');
+    }
+
+    return await response.json();
+}
+
 export const bookListService = {
     createList,
     getCurrentUserLists,
-    addBookToList
+    addBookToList,
+    getBookList
 }

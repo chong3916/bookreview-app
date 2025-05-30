@@ -58,7 +58,7 @@ query GetBookDetails($bookId: Int!) {
 """
 
 GET_BOOK_BASIC_BY_BOOK_ID = """
-query GetBookDetails($bookId: Int!) {
+query GetBookBasic($bookId: Int!) {
     books_by_pk(id: $bookId) {
         id
         image {

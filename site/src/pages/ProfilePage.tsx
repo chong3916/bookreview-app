@@ -9,7 +9,7 @@ import CreateNewListButton from "@/components/CreateNewListButton.tsx";
 import {Link} from "react-router";
 import {Badge} from "@/components/ui/badge"
 import {Button} from "@/components/ui/button.tsx";
-import {testBookList} from "@/bookListFixtures.ts";
+// import {testBookList} from "@/bookListFixtures.ts";
 import PreviewBookList from "@/components/PreviewBookList.tsx";
 
 const ProfilePage: React.FC<{}> = () => {
@@ -70,7 +70,7 @@ const ProfilePage: React.FC<{}> = () => {
                             {list.isPublic ? <Badge className="bg-accent font-light text-accent-foreground rounded-lg h-5">Public</Badge>
                                 : <Badge className="font-light rounded-lg h-5">Private</Badge>}
                         </div>
-                        <PreviewBookList previewBookList={list.preview_books} listId={list.id}/>
+                        {list.preview_books ? <PreviewBookList previewBookList={list.preview_books} listId={list.id}/> : null}
                     </div>
                 )}
             </div>

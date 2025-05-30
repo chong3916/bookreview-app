@@ -16,6 +16,7 @@ export type AuthContextType = {
     accessToken: string | null,
     avatar: string | null,
     book_lists: BookList[],
+    id: number | null
 }
 
 export const AuthContext = React.createContext<{
@@ -23,6 +24,7 @@ export const AuthContext = React.createContext<{
     setAuthData: React.Dispatch<React.SetStateAction<AuthContextType>>;
     logout: () => void;
     refreshBookLists: () => Promise<void>;
+    getCurrentUser: (tokenOverride?: string) => Promise<void>;
 } | null>(null);
 
 const { Provider } = AuthContext;
@@ -35,11 +37,12 @@ export const AuthContextProvider = ({ children }: any) => {
         accessToken: null,
         avatar: null,
         book_lists: [],
+        id: null
     });
 
     const logout = async () => {
         await auth.logout();
-        setAuthData({...authData, email: '', accessToken: null, firstName: '', lastName: '', avatar: null, book_lists: []})
+        setAuthData(prev => ({ ...prev, email: '', accessToken: null, firstName: '', lastName: '', avatar: null, book_lists: [], id: null }));
     }
 
     const refreshBookLists = async () => {
@@ -48,11 +51,42 @@ export const AuthContextProvider = ({ children }: any) => {
         setAuthData(prev => ({ ...prev, book_lists: user.book_lists }));
     }
 
+    const getCurrentUser = async (tokenOverride?: string) => {
+        const token = tokenOverride || authData.accessToken;
+        if (!token) return;
+
+        try {
+            const user = await auth.getCurrentUser(token);
+            setAuthData(prev => ({ ...prev, email: user.email, firstName: user.first_name, lastName: user.last_name, avatar: user.avatar, book_lists: user.book_lists, id: user.id }));
+        } catch (e: any) {
+            if (e.message === 'Failed to fetch current user') {
+                try {
+                    const refreshed = await auth.refreshToken();
+                    const user = await auth.getCurrentUser(refreshed.access);
+                    setAuthData(prev => ({
+                        ...prev,
+                        email: user.email,
+                        firstName: user.first_name,
+                        lastName: user.last_name,
+                        avatar: user.avatar,
+                        book_lists: user.book_lists,
+                        id: user.id,
+                        accessToken: refreshed.access
+                    }));
+                } catch {
+                    console.log("User not logged in, or refresh token expired");
+                    logout();
+                }
+            }
+        }
+    }
+
     const contextValue = {
         authData,
         setAuthData,
         logout,
-        refreshBookLists
+        refreshBookLists,
+        getCurrentUser
     }
 
     const hasRefreshed = React.useRef(false);
@@ -69,7 +103,7 @@ export const AuthContextProvider = ({ children }: any) => {
             const refreshed = await auth.refreshToken();
             const accessToken = refreshed.access;
             const user = await auth.getCurrentUser(accessToken);
-            setAuthData({...authData, email: user.email, accessToken: accessToken, firstName: user.first_name, lastName: user.last_name, avatar: user.avatar, book_lists: user.book_lists})
+            setAuthData(prev => ({ ...prev, email: user.email, accessToken: accessToken, firstName: user.first_name, lastName: user.last_name, avatar: user.avatar, book_lists: user.book_lists, id: user.id}));
         } catch (e) {
             console.log("No valid refresh token");
         }

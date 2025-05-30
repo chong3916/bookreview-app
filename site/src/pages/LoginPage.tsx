@@ -16,7 +16,7 @@ import {Link, useNavigate} from "react-router";
 const LoginPage: React.FC<{}> = () => {
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
-    const { authData, setAuthData } = useAuthContext();
+    const { authData, setAuthData, getCurrentUser } = useAuthContext();
 
     const navigate = useNavigate();
 
@@ -30,10 +30,9 @@ const LoginPage: React.FC<{}> = () => {
 
             const data = await response.json();
             const accessToken = data.access;
+            setAuthData(prev => ({ ...prev, accessToken }));
+            await getCurrentUser(accessToken);
 
-            const user = await auth.getCurrentUser(accessToken);
-
-            setAuthData({...authData, email: user.email, accessToken: accessToken, firstName: user.first_name, lastName: user.last_name, avatar: user.avatar, book_lists: user.book_lists})
             navigate("/");
         } catch (e) {
             console.error("Login failed. Please check your credentials.");

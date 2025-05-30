@@ -1,5 +1,5 @@
-import type {TrendingModel} from "@/components/types/TrendingModel.ts";
 import type {Author} from "@/components/types/BookModel.ts";
+import type {TrendingModel} from "@/components/types/TrendingModel.ts";
 
 export interface PreviewBookModel {
     id: number,
@@ -19,5 +19,15 @@ export default interface BookListModel {
     description: string | null,
     isPublic: boolean,
     book_ids: number[],
-    preview_books: PreviewBookModel[]
+    preview_books?: PreviewBookModel[],
+    book_details?: TrendingModel[],
+    book_detail_pagination?: BookDetailPagination,
+    owner_id: number;
+}
+
+export interface BookDetailPagination {
+    page: number,
+    page_size: number,
+    total: number,
+    total_pages: number
 }

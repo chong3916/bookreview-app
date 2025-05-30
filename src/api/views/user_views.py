@@ -29,7 +29,7 @@ class CurrentUserView(APIView):
         user = CustomUser.objects.prefetch_related("lists").get(pk=request.user.pk)
         user_serializer = CurrentUserSerializer(user)
         book_lists = BookList.objects.filter(user=request.user)
-        book_lists_serializer = BookListSerializer(book_lists, many=True, context={'include_preview_books': False})
+        book_lists_serializer = BookListSerializer(book_lists, many=True, context={'include_preview_books': False, 'include_book_details': False})
 
         user_data = user_serializer.data
         user_data["book_lists"] = book_lists_serializer.data
@@ -126,5 +126,5 @@ class CurrentUserBookListsView(APIView):
 
     def get(self, request):
         book_lists = BookList.objects.filter(user=request.user)
-        serializer = BookListSerializer(book_lists, many=True, context={'include_preview_books': True})
+        serializer = BookListSerializer(book_lists, many=True, context={'include_preview_books': True, 'include_book_details': False})
         return Response(serializer.data)

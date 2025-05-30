@@ -29,7 +29,7 @@ import {Switch} from "@/components/ui/switch.tsx";
 import {Plus} from "lucide-react";
 
 const AddBookButtonDetails: React.FC<{bookId: number}> = ({ bookId }) => {
-    const {authData, setAuthData, refreshBookLists} = useAuthContext();
+    const {authData, setAuthData, refreshBookLists, getCurrentUser} = useAuthContext();
     const [openAddBook, setOpenAddBook] = useState(false)
 
     const [email, setEmail] = useState<string>("");
@@ -72,12 +72,10 @@ const AddBookButtonDetails: React.FC<{bookId: number}> = ({ bookId }) => {
 
             const data = await response.json();
             const accessToken = data.access;
+            setAuthData(prev => ({ ...prev, accessToken }));
+            await getCurrentUser(accessToken);
 
-            const user = await auth.getCurrentUser(accessToken);
             setOpenLogin(false);
-
-            setAuthData({...authData, email: user.email, accessToken: accessToken, firstName: user.first_name, lastName: user.last_name, avatar: user.avatar, book_lists: user.book_lists})
-            await refreshBookLists()
         } catch (e) {
             console.error("Login failed. Please check your credentials.");
         }
