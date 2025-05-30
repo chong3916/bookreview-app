@@ -147,8 +147,8 @@ export const testBookList = [
 export const testBookListDetail = {
     "id": 4,
     "name": "test",
-    "description": "",
-    "isPublic": false,
+    "description": "asdfasd",
+    "isPublic": true,
     "book_ids": [
         328491
     ],
@@ -156,8 +156,8 @@ export const testBookListDetail = {
         {
             "id": 328491,
             "pages": 309,
-            "rating": 4.288402288732394,
-            "ratings_count": 4544,
+            "rating": 4.288055433347998,
+            "ratings_count": 4546,
             "release_year": 1989,
             "reviews_count": 207,
             "title": "Harry Potter and the Sorcerer's Stone",
@@ -188,7 +188,12 @@ export const testBookListDetail = {
             ]
         }
     ],
-    "owner_id": "0sajflaskdjf",
+    "owner_id": "asdfkljasdf",
+    "owner_first_name": "Cher",
+    "owner_last_name": "",
+    "total_books": 1,
+    "created_at": "2025-05-29T07:25:08.644796Z",
+    "last_updated": "2025-05-30T08:04:58.700543Z",
     "book_detail_pagination": {
         "page": 1,
         "page_size": 20,

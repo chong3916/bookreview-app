@@ -14,11 +14,21 @@ class BookListSerializer(serializers.ModelSerializer):
     preview_books = serializers.SerializerMethodField()
     book_details = serializers.SerializerMethodField()
     owner_id = serializers.UUIDField(source="user.id", read_only=True)
+    owner_first_name = serializers.CharField(source="user.first_name", read_only=True)
+    owner_last_name = serializers.CharField(source="user.last_name", read_only=True)
+    total_books = serializers.SerializerMethodField()
+    created_at = serializers.DateTimeField(read_only=True)
+    last_updated = serializers.DateTimeField(read_only=True)
 
     class Meta:
         model = BookList
-        fields = ['id', 'name', 'description', 'isPublic', 'book_ids', 'preview_books', 'book_details', 'owner_id']
+        fields = ['id', 'name', 'description', 'isPublic', 'book_ids', 'preview_books',
+                  'book_details', 'owner_id','owner_first_name', 'owner_last_name',
+                  'total_books', 'created_at', 'last_updated']
         read_only_fields = ['id']
+
+    def get_total_books(self, obj):
+        return len(obj.book_ids)
 
     def get_book_details(self, obj):
         include_detail = self.context.get('include_book_details', False)
@@ -94,7 +104,6 @@ class BookListSerializer(serializers.ModelSerializer):
             rep.pop('book_ids', None)
 
         if self.context.get('include_book_details', False):
-            # Add pagination metadata for book_details
             page = self.context.get('page', 1)
             page_size = self.context.get('page_size', 20)
             total_books = len(instance.book_ids)

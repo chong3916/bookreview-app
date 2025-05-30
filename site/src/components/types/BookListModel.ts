@@ -21,8 +21,13 @@ export default interface BookListModel {
     book_ids: number[],
     preview_books?: PreviewBookModel[],
     book_details?: TrendingModel[],
+    owner_id: string,
+    owner_first_name: string,
+    owner_last_name: string | null,
+    total_books: number,
+    created_at: string,
+    last_updated: string | null,
     book_detail_pagination?: BookDetailPagination,
-    owner_id: string;
 }
 
 export interface BookDetailPagination {
