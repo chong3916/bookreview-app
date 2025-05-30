@@ -22,7 +22,7 @@ export default interface BookListModel {
     preview_books?: PreviewBookModel[],
     book_details?: TrendingModel[],
     book_detail_pagination?: BookDetailPagination,
-    owner_id: number;
+    owner_id: string;
 }
 
 export interface BookDetailPagination {

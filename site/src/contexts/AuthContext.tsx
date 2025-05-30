@@ -16,7 +16,7 @@ export type AuthContextType = {
     accessToken: string | null,
     avatar: string | null,
     book_lists: BookList[],
-    id: number | null
+    id: string | null
 }
 
 export const AuthContext = React.createContext<{

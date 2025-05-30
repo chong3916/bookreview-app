@@ -9,6 +9,12 @@ interface addBookInput {
     book_id: number
 }
 
+interface editListInput {
+    name: string,
+    description: string,
+    isPublic: boolean
+}
+
 const createList = async (accessToken: string | null, name: string, description: string, isPublic: boolean, bookIds: number[]) => {
     if (!accessToken) return
 
@@ -70,7 +76,7 @@ const addBookToList = async (accessToken: string | null, listId: number, bookId:
     })
 
     if (!response.ok) {
-        throw new Error('Failed to create new book list');
+        throw new Error('Failed to add book to list');
     }
 
     return await response.json();
@@ -94,9 +100,34 @@ const getBookList = async (accessToken: string | null, listId: string | undefine
     return await response.json();
 }
 
+const editList = async (accessToken: string | null, listId: number, name: string, description: string, isPublic: boolean) => {
+    if (!accessToken || !listId) throw new Error('Failed to edit list')
+
+    const payload: editListInput = {
+        name: name,
+        description: description,
+        isPublic: isPublic
+    };
+    const response = await fetch(`/api/booklist/${listId}/edit/`, {
+        method: 'PUT',
+        headers: {
+            'Authorization': `Bearer ${accessToken}`, // ⬅️ important
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+    })
+
+    if (!response.ok) {
+        throw new Error('Not authorized to edit list');
+    }
+
+    return await response.json();
+}
+
 export const bookListService = {
     createList,
     getCurrentUserLists,
     addBookToList,
-    getBookList
+    getBookList,
+    editList
 }

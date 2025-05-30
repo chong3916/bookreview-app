@@ -5,6 +5,8 @@ import {bookListService} from "@/api/bookList.ts";
 import type BookListModel from "@/components/types/BookListModel.ts";
 import TrendingCard from "@/components/TrendingCard.tsx";
 import {Button} from "@/components/ui/button.tsx";
+import {testBookListDetail} from "@/bookListFixtures.ts";
+import EditListButton from "@/components/EditListButton.tsx";
 
 const BookListPage: React.FC = () => {
     const { listId } = useParams(); // from URL like /lists/:listId
@@ -33,11 +35,11 @@ const BookListPage: React.FC = () => {
 
         try {
             const response = await bookListService.getBookList(authData.accessToken, listId);
-            console.log(response)
             setBookList(response);
             setIsOwner(authData.id === response.owner_id);
-            console.log(authData.id);
-            console.log(response.owner_id);
+
+            // setBookList(testBookListDetail);
+            // setIsOwner(true);
         } catch (error) {
             setUnauthorized(true);
             console.error("Error fetching list", error);
@@ -51,7 +53,8 @@ const BookListPage: React.FC = () => {
 
     return (
         <div className="grid gap-y-8 py-10 mx-auto w-2/3 mt-20">
-            {isOwner ? <Button>Edit</Button> : null}
+            {isOwner && bookList ? <EditListButton listId={Number(listId)} currentName={bookList.name}
+                                                   currentDescription={bookList.description} currentIsPublic={bookList.isPublic}/> : null}
             <h1 className="text-2xl font-bold">{bookList?.name}</h1>
             <p>{bookList?.description}</p>
             {bookList?.book_details?.map((book) => <TrendingCard book={book}/>)}

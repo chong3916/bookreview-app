@@ -110,3 +110,14 @@ class BookListSerializer(serializers.ModelSerializer):
 
 class AddBookToListSerializer(serializers.Serializer):
     book_id = serializers.IntegerField()
+
+class EditBookListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BookList
+        fields = ['name', 'description', 'isPublic', 'visible_to']
+
+        def validate_visible_to(self, value):
+            request_user = self.context['request'].user
+            if request_user in value:
+                raise serializers.ValidationError("You cannot share a list with yourself.")
+            return value

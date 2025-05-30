@@ -1,6 +1,6 @@
 from rest_framework.generics import CreateAPIView
 from rest_framework.permissions import IsAuthenticated
-from api.serializers.book_list_serializer import BookListSerializer, AddBookToListSerializer
+from api.serializers.book_list_serializer import BookListSerializer, AddBookToListSerializer, EditBookListSerializer
 from book_list.models import BookList
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -59,3 +59,15 @@ class BookListDetailView(APIView):
 
         serializer = BookListSerializer(book_list, context=context)
         return Response(serializer.data)
+
+class EditBookListView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def put(self, request, list_id):
+        book_list = get_object_or_404(BookList, id=list_id, user=request.user)
+
+        serializer = EditBookListSerializer(book_list, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return Response({"detail": "Book list updated successfully."}, status=status.HTTP_200_OK)
