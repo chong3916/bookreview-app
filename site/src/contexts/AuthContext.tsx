@@ -16,7 +16,8 @@ export type AuthContextType = {
     accessToken: string | null,
     avatar: string | null,
     book_lists: BookList[],
-    id: string | null
+    id: string | null,
+    bio: string | null
 }
 
 export const AuthContext = React.createContext<{
@@ -37,12 +38,13 @@ export const AuthContextProvider = ({ children }: any) => {
         accessToken: null,
         avatar: null,
         book_lists: [],
-        id: null
+        id: null,
+        bio: null
     });
 
     const logout = async () => {
         await auth.logout();
-        setAuthData(prev => ({ ...prev, email: '', accessToken: null, firstName: '', lastName: '', avatar: null, book_lists: [], id: null }));
+        setAuthData(prev => ({ ...prev, email: '', accessToken: null, firstName: '', lastName: '', avatar: null, book_lists: [], id: null, bio: null }));
     }
 
     const refreshBookLists = async () => {
@@ -58,7 +60,7 @@ export const AuthContextProvider = ({ children }: any) => {
         try {
             const user = await auth.getCurrentUser(token);
             console.log(user)
-            setAuthData(prev => ({ ...prev, email: user.email, firstName: user.first_name, lastName: user.last_name, avatar: user.avatar, book_lists: user.book_lists, id: user.id }));
+            setAuthData(prev => ({ ...prev, email: user.email, firstName: user.first_name, lastName: user.last_name, avatar: user.avatar, book_lists: user.book_lists, id: user.id, bio: user.bio }));
         } catch (e: any) {
             if (e.message === 'Failed to fetch current user') {
                 try {
@@ -72,7 +74,8 @@ export const AuthContextProvider = ({ children }: any) => {
                         avatar: user.avatar,
                         book_lists: user.book_lists,
                         id: user.id,
-                        accessToken: refreshed.access
+                        bio: user.bio,
+                        accessToken: refreshed.access,
                     }));
                 } catch {
                     console.log("User not logged in, or refresh token expired");
@@ -104,7 +107,7 @@ export const AuthContextProvider = ({ children }: any) => {
             const refreshed = await auth.refreshToken();
             const accessToken = refreshed.access;
             const user = await auth.getCurrentUser(accessToken);
-            setAuthData(prev => ({ ...prev, email: user.email, accessToken: accessToken, firstName: user.first_name, lastName: user.last_name, avatar: user.avatar, book_lists: user.book_lists, id: user.id}));
+            setAuthData(prev => ({ ...prev, email: user.email, accessToken: accessToken, firstName: user.first_name, lastName: user.last_name, avatar: user.avatar, book_lists: user.book_lists, id: user.id, bio: user.bio}));
         } catch (e) {
             console.log("No valid refresh token");
         }

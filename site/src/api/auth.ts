@@ -10,7 +10,6 @@ interface loginInput {
     password: string
 }
 
-
 const signup = async (email: string, firstName:string, lastName: string, password: string) => {
     const payload: signupInput = {
         email: email,
@@ -89,10 +88,52 @@ const logout = async () => {
     return true;
 }
 
+const editProfile = async (accessToken: string | null, firstName: string, lastName: string | null, bio: string | null, avatar: File | null)=> {
+    if (!accessToken) throw new Error('Failed to edit profile');
+
+    const payload = new FormData();
+    payload.append("first_name", firstName);
+    if (lastName) payload.append("last_name", lastName);
+    if (bio) payload.append("bio", bio);
+    if (avatar) payload.append("avatar", avatar);
+
+    console.log(avatar)
+
+    const response = await fetch("/api/users/edit/", {
+        method: "PATCH",
+        headers: {
+            Authorization: `Bearer ${accessToken}`,
+        },
+        body: payload,
+    });
+
+    if (!response.ok) {
+        throw new Error('Failed to edit profile');
+    }
+}
+
+const uploadAvatar = async (accessToken: string, file: File) => {
+    const payload = new FormData();
+    payload.append("avatar", file);
+
+    const response = await fetch("/api/users/upload-avatar/", {
+        method: "POST",
+        headers: {
+            Authorization: `Bearer ${accessToken}`,
+        },
+        body: payload,
+    });
+
+    const data = await response.json();
+    return data.avatar_url;
+}
+
 export const auth = {
     signup,
     login,
     getCurrentUser,
     refreshToken,
-    logout
+    logout,
+    uploadAvatar,
+    editProfile
 }

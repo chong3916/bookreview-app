@@ -83,7 +83,7 @@ const Navbar: React.FC<{}> = () => {
                                     <DropdownMenu>
                                         <DropdownMenuTrigger asChild>
                                             <div className="cursor-pointer pointer-events-auto">
-                                                <Avatar>
+                                                <Avatar className="w-12 h-auto">
                                                     {authData.avatar ? <AvatarImage src={authData.avatar} /> : <AvatarFallback>CN</AvatarFallback>}
                                                     <AvatarFallback>CN</AvatarFallback>
                                                 </Avatar>

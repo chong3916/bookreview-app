@@ -2,11 +2,13 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.generics import RetrieveAPIView
+from rest_framework.parsers import MultiPartParser, FormParser
 
 from api.serializers.book_list_serializer import BookListSerializer
 from book_list.models import BookList
+from core.settings import SUPABASE_URL, SUPABASE_BUCKET, SUPABASE_API_KEY
 from users.models import CustomUser
-from api.serializers.user_serializer import UserSerializer, CurrentUserSerializer
+from api.serializers.user_serializer import UserSerializer, CurrentUserSerializer, EditUserSerializer
 from rest_framework.generics import CreateAPIView
 from rest_framework.permissions import AllowAny
 from django.contrib.auth import get_user_model, authenticate
@@ -15,8 +17,8 @@ from django.contrib.auth.tokens import default_token_generator
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import status
 from rest_framework_simplejwt.exceptions import TokenError
-
-
+import requests
+import uuid
 
 class UserProfileView(RetrieveAPIView):
     queryset = CustomUser.objects.all()
@@ -89,7 +91,7 @@ class ActivateUserView(APIView):
         if user and default_token_generator.check_token(user, token):
             user.is_active = True
             user.save()
-            return Response({"message": "Account activated!"}, status=status.HTTP_200_OK)
+            return Response({"message": "Account activated!"})
         else:
             return Response({"error": "Invalid activation link"}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -117,7 +119,7 @@ class RefreshTokenView(APIView):
         try:
             token = RefreshToken(refresh_token)
             access_token = str(token.access_token)
-            return Response({'access': access_token}, status=status.HTTP_200_OK)
+            return Response({'access': access_token})
         except TokenError as e:
             return Response({'detail': 'Invalid refresh token'}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -128,3 +130,90 @@ class CurrentUserBookListsView(APIView):
         book_lists = BookList.objects.filter(user=request.user)
         serializer = BookListSerializer(book_lists, many=True, context={'include_preview_books': True, 'include_book_details': False})
         return Response(serializer.data)
+
+class UploadAvatarView(APIView):
+    permission_classes = [IsAuthenticated]
+    parser_classes = [MultiPartParser]
+
+    def post(self, request):
+        file = request.FILES.get("avatar")
+        if not file:
+            return Response({"error": "No file uploaded."}, status=400)
+
+        filename = f"{request.user.id}.jpg"
+        upload_url = f"{SUPABASE_URL}/storage/v1/object/{SUPABASE_BUCKET}/{filename}?upsert=true"
+
+        headers = {
+            "Authorization": f"Bearer {SUPABASE_API_KEY}",
+            "Content-Type": file.content_type,
+        }
+
+        response = requests.post(upload_url, headers=headers, files={"file": file})
+
+        if response.status_code == 200:
+            public_url = f"{SUPABASE_URL}/storage/v1/object/public/{SUPABASE_BUCKET}/{filename}"
+            request.user.avatar = public_url
+            request.user.save()
+            return Response({"avatar_url": public_url})
+        else:
+            return Response({"error": "Failed to upload image to Supabase."}, status=500)
+
+class EditUserView(APIView):
+    permission_classes = [IsAuthenticated]
+    parser_classes = [MultiPartParser, FormParser]
+
+    def patch(self, request):
+        avatar_file = request.FILES.get("avatar")
+        data = request.data.copy()
+
+        if avatar_file:
+            # Delete old avatar if it exists
+            old_avatar_url = request.user.avatar
+            if old_avatar_url and "object/public/" in old_avatar_url:
+                old_filename = old_avatar_url.split("/")[-1]
+                delete_url = f"{SUPABASE_URL}/storage/v1/object/{SUPABASE_BUCKET}/{old_filename}"
+                headers = {"Authorization": f"Bearer {SUPABASE_API_KEY}"}
+                requests.delete(delete_url, headers=headers)
+
+            # Generate unique filename
+            ext = avatar_file.name.split('.')[-1]
+            unique_id = uuid.uuid4().hex
+            new_filename = f"{request.user.id}-{unique_id}.{ext}"
+
+            # Upload to Supabase
+            upload_url = f"{SUPABASE_URL}/storage/v1/object/{SUPABASE_BUCKET}/{new_filename}"
+            headers = {
+                "Authorization": f"Bearer {SUPABASE_API_KEY}",
+                "Content-Type": avatar_file.content_type,
+            }
+
+            print("Uploading avatar to:", upload_url)
+            print("Headers:", headers)
+            avatar_file.seek(0)
+
+            upload_response = requests.put(upload_url, data=avatar_file.read(), headers=headers)
+
+            print("Upload response status code:", upload_response.status_code)
+            print("Upload response text:", upload_response.text)
+
+            if upload_response.status_code != 200:
+                return Response({"error": "Failed to upload image to Supabase."}, status=500)
+
+            public_url = f"{SUPABASE_URL}/storage/v1/object/public/{SUPABASE_BUCKET}/{new_filename}"
+            avatar_url_to_set = public_url
+        else:
+            avatar_url_to_set = None
+
+        # Remove avatar from data
+        data.pop("avatar", None)
+
+        serializer = EditUserSerializer(request.user, data=data, partial=True)
+        if serializer.is_valid():
+            user = serializer.save()
+            # Update avatar URL if one was uploaded
+            if avatar_url_to_set:
+                user.avatar = avatar_url_to_set
+                user.save()
+            return Response(serializer.data)
+
+        return Response(serializer.errors, status=400)

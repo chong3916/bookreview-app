@@ -9,7 +9,7 @@ const PreviewBookList: React.FC<{ previewBookList: PreviewBookModel[], listId: n
 
     return (
         <div className="flex flex-row gap-x-8">
-            {previewBookList.map((book) => {
+            {previewBookList.map((book, index) => {
                 const authors: string[] = book.authors.map((author) => {
                     const name = author.name;
                     const contribution = author.contribution;
@@ -17,7 +17,7 @@ const PreviewBookList: React.FC<{ previewBookList: PreviewBookModel[], listId: n
                 }) ?? [];
 
                 return (
-                    <TooltipProvider>
+                    <TooltipProvider key={index}>
                         <Tooltip>
                             <TooltipTrigger asChild>
                                 {book.image_url ? (

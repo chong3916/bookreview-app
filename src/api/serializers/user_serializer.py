@@ -59,4 +59,16 @@ class UserSerializer(serializers.ModelSerializer):
 class CurrentUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = ['first_name', 'last_name', 'email', 'avatar', 'id']
+        fields = ['first_name', 'last_name', 'email', 'avatar', 'id', 'bio']
+
+class EditUserSerializer(serializers.ModelSerializer):
+    avatar = serializers.URLField(required=False, allow_null=True)
+
+    class Meta:
+        model = CustomUser
+        fields = ['first_name', 'last_name', 'bio', 'avatar']
+
+    def validate(self, attrs):
+        if 'first_name' in attrs and not attrs['first_name'].strip():
+            raise serializers.ValidationError({"first_name": "First name cannot be empty."})
+        return attrs
