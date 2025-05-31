@@ -124,10 +124,34 @@ const editList = async (accessToken: string | null, listId: number, name: string
     return await response.json();
 }
 
+const removeBookFromList = async (accessToken: string | null, listId: number, bookId: number) => {
+    if (!accessToken) return
+    console.log(bookId)
+    const payload: addBookInput = {
+        book_id: bookId
+    };
+
+    const response = await fetch(`/api/booklist/${listId}/remove_book/`, {
+        method: 'DELETE',
+        headers: {
+            'Authorization': `Bearer ${accessToken}`, // ⬅️ important
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+    })
+
+    if (!response.ok) {
+        throw new Error('Failed to remove book from list');
+    }
+
+    return await response.json();
+}
+
 export const bookListService = {
     createList,
     getCurrentUserLists,
     addBookToList,
     getBookList,
-    editList
+    editList,
+    removeBookFromList
 }

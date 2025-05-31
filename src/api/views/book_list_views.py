@@ -1,6 +1,7 @@
 from rest_framework.generics import CreateAPIView
 from rest_framework.permissions import IsAuthenticated
-from api.serializers.book_list_serializer import BookListSerializer, AddBookToListSerializer, EditBookListSerializer
+from api.serializers.book_list_serializer import BookListSerializer, AddBookToListSerializer, EditBookListSerializer, \
+    RemoveBookFromListSerializer
 from book_list.models import BookList
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -36,6 +37,27 @@ class AddBookToListView(APIView):
         book_list.save()
 
         return Response({"detail": "Book added to list."}, status=status.HTTP_200_OK)
+
+class RemoveBookFromListView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request, list_id):
+        serializer = RemoveBookFromListSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        book_id = serializer.validated_data['book_id']
+
+        book_list = get_object_or_404(BookList, id=list_id, user=request.user)
+
+        if book_id not in book_list.book_ids:
+            return Response({"detail": "Book not in list."}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Remove book_id from the array field
+        book_list.book_ids.remove(book_id)
+        book_list.save()
+
+        return Response({"detail": "Book removed from list."}, status=status.HTTP_200_OK)
+
 
 class BookListDetailView(APIView):
     permission_classes = [IsAuthenticated]

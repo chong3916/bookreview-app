@@ -16,7 +16,7 @@ import {Link, useNavigate} from "react-router";
 const LoginPage: React.FC<{}> = () => {
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
-    const { authData, setAuthData, getCurrentUser } = useAuthContext();
+    const { setAuthData, getCurrentUser } = useAuthContext();
 
     const navigate = useNavigate();
 

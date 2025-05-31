@@ -57,6 +57,7 @@ export const AuthContextProvider = ({ children }: any) => {
 
         try {
             const user = await auth.getCurrentUser(token);
+            console.log(user)
             setAuthData(prev => ({ ...prev, email: user.email, firstName: user.first_name, lastName: user.last_name, avatar: user.avatar, book_lists: user.book_lists, id: user.id }));
         } catch (e: any) {
             if (e.message === 'Failed to fetch current user') {

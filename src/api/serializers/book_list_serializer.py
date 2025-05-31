@@ -101,7 +101,7 @@ class BookListSerializer(serializers.ModelSerializer):
             rep.pop('preview_books', None)
         if not self.context.get('include_book_details', False):
             rep.pop('book_details', None)
-            rep.pop('book_ids', None)
+            # rep.pop('book_ids', None)
 
         if self.context.get('include_book_details', False):
             page = self.context.get('page', 1)
@@ -130,3 +130,6 @@ class EditBookListSerializer(serializers.ModelSerializer):
             if request_user in value:
                 raise serializers.ValidationError("You cannot share a list with yourself.")
             return value
+
+class RemoveBookFromListSerializer(serializers.Serializer):
+    book_id = serializers.IntegerField()

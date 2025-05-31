@@ -3,14 +3,12 @@ import {useEffect, useState} from "react";
 import {Link, useParams} from "react-router";
 import {bookListService} from "@/api/bookList.ts";
 import type BookListModel from "@/components/types/BookListModel.ts";
-import TrendingCard from "@/components/TrendingCard.tsx";
-import {Button} from "@/components/ui/button.tsx";
-import {testBookListDetail} from "@/bookListFixtures.ts";
 import EditListButton from "@/components/EditListButton.tsx";
 import {Badge} from "@/components/ui/badge.tsx";
 import * as React from "react";
 import { formatDistanceToNow } from 'date-fns';
 import {Separator} from "@/components/ui/separator.tsx";
+import ListBookCard from "@/components/ListBookCard.tsx";
 
 const BookListPage: React.FC = () => {
     const { listId } = useParams(); // from URL like /lists/:listId
@@ -21,39 +19,48 @@ const BookListPage: React.FC = () => {
 
     const [isOwner, setIsOwner] = useState<boolean>(false);
 
-    const timeSince = (dateString) => {
+    const timeSince = (dateString: any) => {
         return formatDistanceToNow(new Date(dateString), { addSuffix: true });
     };
 
     useEffect(() => {
-        // if (!authData) return;
-        //
-        // if (!listId || !authData.accessToken) {
-        //     setUnauthorized(true);
-        //     setLoading(false);
-        //     return;
-        // }
+        if (!authData) return;
+
+        if (!listId || !authData.accessToken) {
+            setUnauthorized(true);
+            setLoading(false);
+            return;
+        }
 
         fetchBookList();
-    }, [listId, authData]);
+    }, [listId, authData?.accessToken]);
 
     const fetchBookList = async () => {
         setUnauthorized(false);
         setLoading(true);
 
         try {
-            // const response = await bookListService.getBookList(authData.accessToken, listId);
-            // setBookList(response);
-            // setIsOwner(authData.id === response.owner_id);
+            const response = await bookListService.getBookList(authData.accessToken, listId);
+            setBookList(response);
+            setIsOwner(authData.id === response.owner_id);
 
-            setBookList(testBookListDetail);
-            setIsOwner(true);
+            // setBookList(testBookListDetail);
+            // setIsOwner(true);
         } catch (error) {
             setUnauthorized(true);
             console.error("Error fetching list", error);
         } finally {
             setLoading(false);
         }
+    };
+
+    const removeBookFromList = (bookIdToRemove: number) => {
+        if (!bookList) return;
+        setBookList({
+            ...bookList,
+            book_details: (bookList.book_details ?? []).filter(book => book.id !== bookIdToRemove),
+            total_books: (bookList.total_books ?? 1) - 1,
+        });
     };
 
     if (loading) return <div className="text-center mt-20">Loading...</div>;
@@ -79,8 +86,8 @@ const BookListPage: React.FC = () => {
                 <div>{bookList?.total_books} book{bookList?.total_books && bookList?.total_books > 1 ? "s" : null}</div>
             </div>
             <div className="font-extralight">{bookList?.description}</div>
-            {bookList?.book_details?.map((book) => <TrendingCard key={book.id} book={book}/>)}
-            {bookList?.book_details?.length === 0 ? <div>There are no books is this list</div> : null}
+            {listId && bookList?.book_details?.map((book) => <ListBookCard key={book.id} book={book} listId={Number(listId)} isOwner={isOwner} onRemoveBook={() => removeBookFromList(book.id)}/>)}
+            {bookList?.book_details?.length === 0 ? <div className="text-center mt-8 text-muted-foreground">There are no books in this list</div> : null}
         </div>
     );
 };
