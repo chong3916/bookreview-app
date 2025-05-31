@@ -16,6 +16,7 @@ import {Eye, EyeOff} from "lucide-react";
 const ProfilePage: React.FC<{}> = () => {
     const { authData } = useAuthContext();
     const [bookLists, setBookLists] = useState<BookListModel[]>([])
+    const [totalLists, setTotalLists] = useState<number>(0)
 
     useEffect(() => {
         // setBookLists(testBookList)
@@ -27,7 +28,8 @@ const ProfilePage: React.FC<{}> = () => {
     const getUserLists = async () => {
         try {
             const response = await bookListService.getCurrentUserLists(authData.accessToken);
-            setBookLists(response);
+            setBookLists(response.results);
+            setTotalLists(response.count)
             console.log(response)
             // setBookLists(testBookList)
         } catch (e) {

@@ -44,16 +44,38 @@ const createList = async (accessToken: string | null, name: string, description:
 const getCurrentUserLists = async (accessToken: string | null)=> {
     if (!accessToken) return
 
-    const response = await fetch('/api/users/profile/booklists/', {
+    const response = await fetch('/api/users/booklists/', {
         method: 'GET',
         headers: {
-            'Authorization': `Bearer ${accessToken}`, // ⬅️ important
+            'Authorization': `Bearer ${accessToken}`,
             'Content-Type': 'application/json'
         }
     })
 
     if (!response.ok) {
         throw new Error('Failed to get profiles book lists');
+    }
+
+    return await response.json();
+}
+
+const getAllUsersLists = async (accessToken: string | null, userId: string, page: number)=> {
+    const headers: HeadersInit = {
+        'Content-Type': 'application/json',
+    };
+
+    if (accessToken) {
+        headers['Authorization'] = `Bearer ${accessToken}`;
+    }
+
+
+    const response = await fetch(`/api/users/booklists/?user_id=${userId}&page=${page}`, {
+        method: 'GET',
+        headers,
+    })
+
+    if (!response.ok) {
+        throw new Error('Failed to get book lists');
     }
 
     return await response.json();
@@ -153,5 +175,6 @@ export const bookListService = {
     addBookToList,
     getBookList,
     editList,
-    removeBookFromList
+    removeBookFromList,
+    getAllUsersLists
 }

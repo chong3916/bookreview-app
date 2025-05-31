@@ -20,6 +20,10 @@ from rest_framework_simplejwt.exceptions import TokenError
 import requests
 import uuid
 
+from rest_framework.exceptions import NotFound
+from django.db import models
+from rest_framework.pagination import PageNumberPagination
+
 class UserProfileView(RetrieveAPIView):
     queryset = CustomUser.objects.all()
     serializer_class = UserSerializer
@@ -123,13 +127,58 @@ class RefreshTokenView(APIView):
         except TokenError as e:
             return Response({'detail': 'Invalid refresh token'}, status=status.HTTP_400_BAD_REQUEST)
 
-class CurrentUserBookListsView(APIView):
-    permission_classes = [IsAuthenticated]
+# class CurrentUserBookListsView(APIView):
+#     permission_classes = [IsAuthenticated]
+#
+#     def get(self, request):
+#         book_lists = BookList.objects.filter(user=request.user)
+#         serializer = BookListSerializer(book_lists, many=True, context={'include_preview_books': True, 'include_book_details': False})
+#         return Response(serializer.data)
+
+class UserBookListsPagination(PageNumberPagination):
+    page_size = 5
+    page_size_query_param = 'page_size'
+
+class UserBookListsView(APIView):
+    permission_classes = [AllowAny]
 
     def get(self, request):
-        book_lists = BookList.objects.filter(user=request.user)
-        serializer = BookListSerializer(book_lists, many=True, context={'include_preview_books': True, 'include_book_details': False})
-        return Response(serializer.data)
+        target_user_id = request.query_params.get("user_id")
+
+        if target_user_id:
+            try:
+                target_user = CustomUser.objects.get(id=target_user_id)
+            except CustomUser.DoesNotExist:
+                raise NotFound("User not found.")
+
+            if request.user.is_authenticated and request.user == target_user:
+                # Owner requesting their own lists: no filter, show all
+                book_lists = BookList.objects.filter(user=target_user).order_by('-created_at')
+            else:
+                # Others: only public or visible lists
+                filters = models.Q(isPublic=True)
+                if request.user.is_authenticated:
+                    filters |= models.Q(visible_to=request.user)
+
+                book_lists = BookList.objects.filter(user=target_user).filter(filters).order_by('-created_at')
+        else:
+            if not request.user.is_authenticated:
+                return Response({"detail": "Authentication required to view your own lists."}, status=401)
+
+            book_lists = BookList.objects.filter(user=request.user).order_by('-created_at')
+
+        paginator = UserBookListsPagination()
+        paginated_lists = paginator.paginate_queryset(book_lists, request)
+
+        serializer = BookListSerializer(
+            paginated_lists,
+            many=True,
+            context={
+                'include_preview_books': True,
+                'include_book_details': False
+            }
+        )
+        return paginator.get_paginated_response(serializer.data)
 
 class UploadAvatarView(APIView):
     permission_classes = [IsAuthenticated]

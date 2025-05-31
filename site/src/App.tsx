@@ -17,6 +17,7 @@ import SeriesPage from "@/pages/SeriesPage.tsx";
 import BrowseTagsPage from "@/pages/BrowseTagsPage.tsx";
 import ProfilePage from "@/pages/ProfilePage.tsx";
 import BookListPage from "@/pages/BookListPage.tsx";
+import UserListsPage from "@/pages/UserListsPage.tsx";
 
 function App() {
     return (
@@ -39,7 +40,7 @@ function App() {
                                 <Route path="/browse/:browseType?" element={<BrowseTagsPage/>} />
                                 <Route path="/profile" element={<ProfilePage/>}/>
                                 <Route path="/list/:listId" element={<BookListPage />}/>
-                                {/*<Route path="/profile/lists" element={<ListsPage/>}/>*/}
+                                <Route path="/user/:userId/lists" element={<UserListsPage/>}/>
                                 <Route path="/" element={<HomePage/>}/>
                             </Routes>
                         </div>

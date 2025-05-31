@@ -93,7 +93,7 @@ const Navbar: React.FC<{}> = () => {
                                             <DropdownMenuLabel className="cursor-default">{authData.firstName}</DropdownMenuLabel>
                                             <DropdownMenuSeparator />
                                             <DropdownMenuItem className="cursor-pointer" onClick={() => navigate("/profile")}>Profile</DropdownMenuItem>
-                                            <DropdownMenuItem className="cursor-pointer" onClick={() => navigate("/profile/lists")}>My Lists</DropdownMenuItem>
+                                            <DropdownMenuItem className="cursor-pointer" onClick={() => navigate(`/user/${authData.id}/lists`)}>My Lists</DropdownMenuItem>
                                             <DropdownMenuItem className="cursor-pointer" onClick={() => navigate("/profile/followers")}>Followers</DropdownMenuItem>
                                             <DropdownMenuItem className="cursor-pointer" onClick={() => handleLogout()}>Logout</DropdownMenuItem>
                                         </DropdownMenuContent>
